@@ -22,8 +22,8 @@ that consist of dict-like nodes with `node_id`-like and `content_id`-like attrib
 
 ### Tree diff format
 A tree diff is a dictionary that describes four types of edits:
-  - `nodes_added`: list of nodes added to the tree (includes both nodes ADD and COPY actions)
   - `nodes_deleted`: list of nodes that were present (by `node_id`) in `oldtree` and absent in the `newtree` (by `node_id`)
+  - `nodes_added`: list of nodes added to the tree (includes both nodes ADD and COPY actions)
   - `nodes_moved`: nodes in the `newtree` that have the same `content_id` as a node
     in the `oldtree` by a new `node_id` has changed. If multiple nodes satisfy
     this criterion, the only the first node is retuned (in tree-order).
