@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import sphinx_py3doc_enhanced_theme
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -13,6 +12,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
+    'recommonmark',
+    'nbsphinx',
 ]
 source_suffix = '.rst'
 master_doc = 'index'
@@ -22,17 +23,22 @@ author = 'Ivan Savov'
 copyright = '{0}, {1}'.format(year, author)
 version = release = '0.0.1'
 
+
+exclude_patterns = [
+    'examples/.ipynb_checkpoints',
+    'examples/drafts',
+    '_build',
+    'build',
+]
+
+
 pygments_style = 'trac'
 templates_path = ['.']
 extlinks = {
     'issue': ('https://github.com/learningequality/treediffer/issues/%s', '#'),
     'pr': ('https://github.com/learningequality/treediffer/pull/%s', 'PR #'),
 }
-html_theme = "sphinx_py3doc_enhanced_theme"
-html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
-html_theme_options = {
-    'githuburl': 'https://github.com/learningequality/treediffer/'
-}
+html_theme = "sphinx_rtd_theme"
 
 html_use_smartypants = True
 html_last_updated_fmt = '%b %d, %Y'
@@ -45,3 +51,7 @@ html_short_title = '%s-%s' % (project, version)
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
+
+
+source_suffix = ['.md', '.rst', '.ipynb']
+
