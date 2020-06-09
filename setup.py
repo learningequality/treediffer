@@ -29,7 +29,7 @@ setup(
     license='MIT',
     description='A library of utility functions for coputing diffs between tree-like data structures.',
     long_description='%s\n%s' % (
-        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
+        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.md')),
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
     ),
     author='Ivan Savov',
@@ -65,7 +65,9 @@ setup(
         'Issue Tracker': 'https://github.com/learningequality/treediffer/issues',
     },
     keywords=[
-        # eg: 'keyword1', 'keyword2', 'keyword3',
+        "tree",
+        "diff", "differences",
+        "content",
     ],
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires=[
