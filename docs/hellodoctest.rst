@@ -1,5 +1,5 @@
-The parrot module
-=================
+Doctests walkthrough
+====================
 
 
 .. testsetup:: *
@@ -18,13 +18,9 @@ Doctest example:
 
 Test-Output example:
 
-.. testcode::
+.. doctest::
 
    'lower case'.upper()
-
-This would output:
-
-.. testoutput::
-
    'LOWER CASE'
+
 
