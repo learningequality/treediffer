@@ -3,3 +3,4 @@ sphinx_rtd_theme
 recommonmark
 nbsphinx
 ipython
+sphinx-markdown-tables

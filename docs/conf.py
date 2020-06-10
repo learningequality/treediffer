@@ -13,6 +13,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'recommonmark',
+    'sphinx_markdown_tables',
     'nbsphinx',
 ]
 source_suffix = '.rst'
