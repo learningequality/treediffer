@@ -1,7 +1,7 @@
 
 
-
 ## Node structural annotations
+
 
 |                	| old_parent_id 	| parent_id 	| old_sort_order 	| sort_order 	|
 |----------------	|:-------------:	|:---------:	|:--------------:	|:----------:	|

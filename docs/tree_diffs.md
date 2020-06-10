@@ -9,8 +9,8 @@ A node deletion appears under the key `nodes_deleted.{node_id}` and contains the
 structural info where the deletion occurred, and the attributes of the node that was deleted:
 
 ```python
-nodes_deleted = {
-    "node_id": {
+nodes_deleted = [
+    {
         "old_node_id": (str),
         "old_parent_id": (str),
         "old_sort_order": (float),
@@ -22,9 +22,10 @@ nodes_deleted = {
             "sort_order": {"value": (float)},
             ... }
     },
-    "node_id2": {},
-    ...
-}
+    {},
+    ...,
+    {},
+]
 ```
 
 To apply this deletion patch, find content node
@@ -39,8 +40,8 @@ A node added to the tree is appears under the key `nodes_added.{node_id}` and is
 represented by the following dict:
 
 ```python
-nodes_added = {
-    "node_id": {
+nodes_added = [
+    {
         "parent_id": (node_id),
         "node_id": (node_id),
         "sort_order": (float),
@@ -52,9 +53,10 @@ nodes_added = {
             "sort_order": {"value": (float)},
             ... }
     },
-    "node_id2": {},
-    ...
-}
+    {},
+    ...,
+    {},
+]
 ```
 
 To apply this "patch," create a new `c = ContentNode(**map(..., attributes))`,
@@ -75,8 +77,8 @@ while others "node clones" of the same `content_id` are recorded as additions.
 
 
 ```python
-nodes_moved = {
-    "node_id": {
+nodes_moved = [
+    {
         "content_id": (content_id),
         "node_id": (node_id),
         "old_node_id": (node_id),
@@ -91,9 +93,10 @@ nodes_moved = {
             "sort_order": {"value": (float), "old_value": (== old_sort_order)},
             ...},
     },
-    "node_id2": {},
-    ...
-}
+    {},
+    ...,
+    {},
+]
 ```
 
 
@@ -108,8 +111,8 @@ attributes (assessment_items).
 Example data structure:
 
 ```python
-nodes_modified = {
-    "node_id": {
+nodes_modified = [
+    {
         "node_id": (node_id),
         "parent_id": (node_id),
         "content_id": (content_id),
@@ -134,20 +137,21 @@ nodes_modified = {
                     {"id": "aiid3", "assessment_id": 'q3', ... },
                     {"id": "aiid4", "assessment_id": 'q4', ... }
                 ],
-                "assessment_items_deleted": {
-                    "aiid2": {"id": "aiid2", "assessment_id": 'q2', ... }
-                }
-                "assessment_items_added": {
-                    "aiid3": {"sort_order", 3.0, "id": "aiid3", "assessment_id": 'q3', ... },
-                    "aiid4": {"sort_order", 4.0, "id": "aiid4", "assessment_id": 'q4', ... },
-                }
-                "assessment_items_moved": {},
-                "assessment_items_modified": {},
+                "assessment_items_deleted": [
+                    {"id": "aiid2", "assessment_id": 'q2', ... },
+                ]
+                "assessment_items_added": [
+                    {"sort_order", 3.0, "id": "aiid3", "assessment_id": 'q3', ... },
+                    {"sort_order", 4.0, "id": "aiid4", "assessment_id": 'q4', ... },
+                ]
+                "assessment_items_moved": [],
+                "assessment_items_modified": [],
             },
     },
-    "node_id2": {},
-    ...
-}}
+    {},
+    ...,
+    {},
+]
 ```
 
 Note the `assessment_items` dict is isomorphic to the outer tree diff format,

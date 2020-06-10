@@ -1,11 +1,13 @@
 treediffer
 ==========
 
+[![build](https://travis-ci.com/learningequality/treediffer.svg?branch=master)](https://travis-ci.com/github/learningequality/treediffer)
+
+
 A library of utility functions for computing diffs between tree-like data structures.
 
 <!--
 [![docs](https://readthedocs.org/projects/treediffer/badge/?style=flat)](https://readthedocs.org/projects/treediffer)
-[![build](https://travis-ci.com/learningequality/treediffer.svg?branch=master)](https://travis-ci.com/github/learningequality/treediffer)
 [![pypi](https://img.shields.io/pypi/pyversions/treediffer.svg)](https://pypi.python.org/pypi/treediffer/)
 [![codecov](https://codecov.io/gh/learningequality/treediffer/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/learningequality/treediffer)
 [![version](https://img.shields.io/pypi/v/treediffer.svg)])https://pypi.org/project/treediffer)
@@ -40,15 +42,16 @@ title was edited will appear in all four lists:
  - in the `nodes_modified` list because of the title edit
 
 
+
 ### Technical notes
 
 **Invariant**: the information in a tree diff `treediff(oldtree, newtree)`, when
 applied as a "patch" to the `oldtree` should produce the `newtree`.
 
-**Data format**: the values under each of these keys is actually a dict, not a
-list, with the keys being `node_id`s. The diff includes additional structural annotations
-like  `parent_id` and all node attributes like title, description, files, assessment items, tags, etc.,
-even if they haven't changed to allow for easy display of diffs and post-processing tasks.
+**Data format**: each of the "diff items" in the four lists includes additional
+structural annotations like  `parent_id` and all node attributes like title,
+description, files, assessment items, tags, etc., even if they haven't changed
+to allow for easy display of diffs and post-processing tasks.
 
 
 
