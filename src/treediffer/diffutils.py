@@ -1,4 +1,3 @@
-import pysnooper
 
 
 def list2dict(alist, by="node_id"):
@@ -11,7 +10,7 @@ def list2dict(alist, by="node_id"):
         adict[key] = item
     return adict
 
-# @pysnooper.snoop()
+
 def contains(container, item, by="node_id"):
     """
     Check if item appears in container (list or dict) based on the key in `by`.
