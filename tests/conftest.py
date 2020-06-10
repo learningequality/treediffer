@@ -62,6 +62,18 @@ def sample_children_add_and_rm():
 
 
 @pytest.fixture
+def sample_children_reordered(sample_children):
+    return [
+        sample_children[0],
+        sample_children[2],
+        sample_children[1],
+    ]
+
+
+
+
+
+@pytest.fixture
 def basic_tree(sample_children):
     return {
         "title": "Basic tree",
