@@ -117,6 +117,7 @@ nodes_modified = [
         "parent_id": (node_id),
         "content_id": (content_id),
         # intentionally not tracking changes in sort_order since those are defined as moves
+        "changed": ["title", "sort_order", "tags", "assessment_items"],
         "attributes": {
             "title":{
                 "old_value": "Old title",
@@ -158,4 +159,16 @@ Note the `assessment_items` dict is isomorphic to the outer tree diff format,
 with `{type}_deleted`, `{type}_added`, `{type}_moved`, and `{type}_modified` take
 now refer to `assesment_items` instead of content node children.
 
+
+
+
+## Node structural annotations
+
+
+|                	| `old_parent_id` 	| `parent_id` 	| `old_sort_order` 	| `sort_order` 	|
+|-------------------|:-----------------:|:-------------:|:-----------------:|:-------------:|
+| `nodes_deleted`  	| x             	|           	| x              	|            	|
+| `nodes_added`   	|               	| x         	|                	| x          	|
+| `nodes_moved`   	| x             	| x         	| x              	| x          	|
+| `nodes_modified` 	|               	|           	|                	|            	|
 
