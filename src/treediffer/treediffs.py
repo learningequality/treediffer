@@ -176,7 +176,7 @@ def diff_attributes(nodeA, nodeB,
         attrB = mapB.get(attr, attr)
 
         if nodeA.get(attrA) is None and nodeB.get(attrB) is None:
-            print("WARNING requested diff for attr " + attr + "that don't exist")
+            print("WARNING requested diff for attr " + attr + " that don't exist")
             continue
         elif nodeA.get(attrA) is None:
             attributes[attr] = {'value': nodeB[attrB]}
@@ -198,7 +198,7 @@ def diff_attributes(nodeA, nodeB,
         attrB = mapB.get(attr, attr)
 
         if nodeA.get(attrA) is None and nodeB.get(attrB) is None:
-            print("WARNING requested diff for attr " + attr + "that don't exist")
+            print("WARNING requested diff for attr " + attr + " that don't exist")
             continue
         elif nodeA.get(attrA) is None:
             attributes[attr] = {'value': nodeB[attrB]}

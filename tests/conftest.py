@@ -86,6 +86,8 @@ def sample_node():
         "description": "This node is super simple.",
         "language": "en",
         "children": [],
+        "files": [],
+        "tags": [],
     }
 
 
