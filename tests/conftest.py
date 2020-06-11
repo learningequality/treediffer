@@ -90,6 +90,28 @@ def sample_node():
 
 
 
+# SET-LIKE FIXTURES
+################################################################################
+
+@pytest.fixture
+def sample_tags():
+    return ['tag1', 'tag2', 'tag3']
+
+@pytest.fixture
+def sample_tags_add_and_rm():
+    return ['tag1','tag4', 'tag3', 'tag5', 'tag6']
+
+@pytest.fixture
+def sample_tags_reordered():
+    return ['tag1','tag3', 'tag2']
+
+@pytest.fixture
+def sample_node_with_tags(sample_node, sample_tags):
+    node = sample_node
+    node['tags'] = sample_tags
+    return node
+
+
 
 # TREE FIXTURES
 ################################################################################
@@ -103,3 +125,4 @@ def basic_tree(sample_children):
         "language": "en",
         "children": sample_children(),
     }
+

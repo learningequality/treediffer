@@ -1,6 +1,6 @@
 import pprint
 
-from .diffutils import list2dict, contains
+from .diffutils import contains
 
 def compare_node_attrs(nodeA, nodeB, attrs):
     diff = []
@@ -122,10 +122,10 @@ def diff_lists(listA, listB, parent_idA, parent_idB, attrs=['title'], mapA={}, m
 def diff_attributes(nodeA, nodeB, attrs=None, exclude_attrs=[], mapA={}, mapB={}):
     """
     Compute the diff between the attrributes of `nodeA` and `nodeB`.
-    Returns a dict { changed=[], attributes={} }
+    Returns a dict { added=[], deleted=[], modifeid=[], attributes={} }
     """
     attributes = {}
-    changed = []
+    added, deleted, modified = [], [], []
 
     # Get nodeA info
     node_id_keyA = mapA.get('node_id', 'node_id')
@@ -147,43 +147,27 @@ def diff_attributes(nodeA, nodeB, attrs=None, exclude_attrs=[], mapA={}, mapB={}
     for attr in attrs:
         if attr in exclude_attrs:
             continue
-        if nodeA[attr] == nodeB[attr]:
+        if nodeA.get(attr) is None:
+            attributes[attr] = {'value': nodeB[attr]}
+            added.append(attr)
+        elif nodeB.get(attr) is None:
+            attributes[attr] = {'old_value': nodeA[attr]}
+            deleted.append(attr)
+        elif nodeA[attr] == nodeB[attr]:
+            # no difference
             attributes[attr] = {'value': nodeB[attr]}
         else:
-            # there is a difference
+            # both exist and there is a difference
             attributes[attr] = {'old_value': nodeA[attr], 'value': nodeB[attr]}
-            changed.append(attr)
+            modified.append(attr)
 
-    return {'changed': changed, 'attributes': attributes}
+    return {
+        'added': added,
+        'deleted': deleted,
+        'modified': modified,
+        'attributes': attributes,
+    }
 
-
-
-def compare_trees_children(nodeA, nodeB, attrs=['title'], mapA={}, mapB={}, recursive=True):
-    """
-    Check children of nodeA and nodeB are identical.
-    Args:
-      - attrs (list(str)): what attributes to check in comparison
-      - mapA: map of attribues in attr to nodeA attributes
-      - mapB: map of attribues in attr to nodeB attributes
-      - recursive (bool): compare just the two lists or also compare dec
-    """
-    diff = []
-    childrenA = nodeA.get('children', [])
-    childrenB = nodeB.get('children', [])
-    if not childrenA and not childrenB:
-        return []
-    if childrenA and not childrenB or not childrenA and childrenB:
-        return ['different children']
-    elif childrenA and childrenB:
-        children_pairs = zip(childrenA, childrenB)
-        for children_pair in children_pairs:
-            childA, childB = children_pair
-            children_attr_diff = compare_node_attrs(childA, childB, attrs=attrs, mapA=mapA, mapB=mapB)
-            diff.extend(children_attr_diff)
-            if recursive:
-                children_diff = compare_trees_children(childA, childB, attrs=attrs, mapA=mapA, mapB=mapB, recursive=recursive)
-                diff.extend(children_diff)
-    return diff
 
 
 def compare_subtrees(nodeA, nodeB, attrs=['title'], mapA={}, mapB={}):
@@ -204,7 +188,8 @@ def compare_subtrees(nodeA, nodeB, attrs=['title'], mapA={}, mapB={}):
 
 
 
-def treediff(oldtree, newtree, ignoreattrs=None, treekeys=['children', 'questions', 'files']):
+def treediff(oldtree, newtree, attrs=None, exclude_attrs=[], mapA={}, mapB={},
+             listlike_attrs=['questions'],  setlike_attrs=['tags', 'files']):
     """
     Compute the differences between `newtree` and `oldtree`.
     """
