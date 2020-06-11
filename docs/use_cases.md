@@ -60,4 +60,3 @@ C. Changes to result list of a saved search
  - show list of new matches or removed search matches
    Requires: storing /content/searchresults/{{saved_seach_id}}/{{datetime}}/results.json
    Requires: redoing search query every time list of saved searches UI is displayed in order to compute bell notification
-

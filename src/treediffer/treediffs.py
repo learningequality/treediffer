@@ -17,7 +17,7 @@ def diff_lists(listA, listB, parent_idA, parent_idB, attrs=['title'], mapA={}, m
     Compute the diff between the nodes in `listA` and the noddes in `listB`.
     Args:
       - attrs (list(str)): what attributes to check in comparison
-      - mapA: map of diff attribues in listA node attributes
+      - mapA: map of diff attribues to listA node attributes
       - mapB: map of diff attribues to listB node attributes
       - recursive (bool): check just one level of children, or all levels of children?
     """
@@ -119,11 +119,14 @@ def diff_lists(listA, listB, parent_idA, parent_idB, attrs=['title'], mapA={}, m
     return diff
 
 
-def diff_attributes(nodeA, nodeB, attrs=None, exclude_attrs=[], mapA={}, mapB={}):
+def diff_attributes(nodeA, nodeB, attrs=None, exclude_attrs=[], mapA={}, mapB={},
+                    listlike_attrs=['questions'], setlike_attrs=['tags','files']):
     """
     Compute the diff between the attrributes of `nodeA` and `nodeB`.
     Returns a dict { added=[], deleted=[], modifeid=[], attributes={} }
     """
+    listlike_attrs = ['questions']
+    setlike_attrs = ['tags', 'files']
     attributes = {}
     added, deleted, modified = [], [], []
 
@@ -144,10 +147,18 @@ def diff_attributes(nodeA, nodeB, attrs=None, exclude_attrs=[], mapA={}, mapB={}
     if attrs is None:
         attrs = sorted( set(nodeA.keys()).union(nodeB.keys()) )
 
+
+    # 1. Regular attributes
+    attrs.remove('tags')
+
     for attr in attrs:
         if attr in exclude_attrs:
             continue
-        if nodeA.get(attr) is None:
+
+        attrA = mapA.get(attr, attr)
+        attrB = mapB.get(attr, attr)
+
+        if nodeA.get(attrA) is None:
             attributes[attr] = {'value': nodeB[attr]}
             added.append(attr)
         elif nodeB.get(attr) is None:
