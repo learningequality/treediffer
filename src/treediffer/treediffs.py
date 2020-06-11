@@ -119,6 +119,44 @@ def diff_lists(listA, listB, parent_idA, parent_idB, attrs=['title'], mapA={}, m
     return diff
 
 
+def diff_attributes(nodeA, nodeB, attrs=None, exclude_attrs=[], mapA={}, mapB={}):
+    """
+    Compute the diff between the attrributes of `nodeA` and `nodeB`.
+    Returns a dict { changed=[], attributes={} }
+    """
+    attributes = {}
+    changed = []
+
+    # Get nodeA info
+    node_id_keyA = mapA.get('node_id', 'node_id')
+    content_id_keyA = mapA.get('content_id', 'content_id')
+    node_idA, content_idA = nodeA[node_id_keyA], nodeA[content_id_keyA]
+    sort_order_keyA = mapA.get('sort_order', 'sort_order')
+    sort_orderA = nodeA.get(sort_order_keyA, None)
+
+    # Get nodeB info
+    node_id_keyB = mapB.get('node_id', 'node_id')
+    content_id_keyB = mapB.get('content_id', 'content_id')
+    node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
+    sort_order_keyB = mapB.get('sort_order', 'sort_order')
+    sort_orderB = nodeB.get(sort_order_keyB, None)
+
+    if attrs is None:
+        attrs = sorted( set(nodeA.keys()).union(nodeB.keys()) )
+
+    for attr in attrs:
+        if attr in exclude_attrs:
+            continue
+        if nodeA[attr] == nodeB[attr]:
+            attributes[attr] = {'value': nodeB[attr]}
+        else:
+            # there is a difference
+            attributes[attr] = {'old_value': nodeA[attr], 'value': nodeB[attr]}
+            changed.append(attr)
+
+    return {'changed': changed, 'attributes': attributes}
+
+
 
 def compare_trees_children(nodeA, nodeB, attrs=['title'], mapA={}, mapB={}, recursive=True):
     """

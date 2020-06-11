@@ -1,6 +1,9 @@
 import pytest
 
 
+# LIST-LIKE FIXTURES
+################################################################################
+
 @pytest.fixture
 def sample_children():
     return [
@@ -60,7 +63,6 @@ def sample_children_add_and_rm():
     ]
 
 
-
 @pytest.fixture
 def sample_children_reordered(sample_children):
     return [
@@ -70,8 +72,27 @@ def sample_children_reordered(sample_children):
     ]
 
 
+# NODE FIXTURES
+################################################################################
 
 
+@pytest.fixture
+def sample_node():
+    return {
+        "kind_id": "document",
+        "node_id": "nidx",
+        "content_id": "cidx",
+        "title": "Sample node",
+        "description": "This node is super simple.",
+        "language": "en",
+        "children": [],
+    }
+
+
+
+
+# TREE FIXTURES
+################################################################################
 
 @pytest.fixture
 def basic_tree(sample_children):
@@ -82,4 +103,3 @@ def basic_tree(sample_children):
         "language": "en",
         "children": sample_children(),
     }
-
