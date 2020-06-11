@@ -119,17 +119,11 @@ def diff_lists(listA, listB, parent_idA, parent_idB, attrs=['title'], mapA={}, m
     return diff
 
 
-def diff_attributes(nodeA, nodeB, attrs=None, exclude_attrs=[], mapA={}, mapB={},
-                    listlike_attrs=['questions'], setlike_attrs=['tags','files']):
-    """
-    Compute the diff between the attrributes of `nodeA` and `nodeB`.
-    Returns a dict { added=[], deleted=[], modifeid=[], attributes={} }
-    """
-    listlike_attrs = ['questions']
-    setlike_attrs = ['tags', 'files']
-    attributes = {}
-    added, deleted, modified = [], [], []
-
+def diff_node(nodeA, nodeB,
+    attrs=None, exclude_attrs=[], mapA={}, mapB={},
+    listlike_attrs=['assesment_items'],
+    setlike_attrs=['tags', 'files'],
+):
     # Get nodeA info
     node_id_keyA = mapA.get('node_id', 'node_id')
     content_id_keyA = mapA.get('content_id', 'content_id')
@@ -144,33 +138,92 @@ def diff_attributes(nodeA, nodeB, attrs=None, exclude_attrs=[], mapA={}, mapB={}
     sort_order_keyB = mapB.get('sort_order', 'sort_order')
     sort_orderB = nodeB.get(sort_order_keyB, None)
 
-    if attrs is None:
-        attrs = sorted( set(nodeA.keys()).union(nodeB.keys()) )
 
+
+def diff_attributes(nodeA, nodeB,
+    attrs=None, exclude_attrs=[], mapA={}, mapB={},
+    listlike_attrs=['assesment_items'],
+    setlike_attrs=['tags', 'files'],
+):
+    """
+    Compute the diff between the attrributes of `nodeA` and `nodeB`.
+    Returns a dict { added=[], deleted=[], modifeid=[], attributes={} }
+    """
+    attributes = {}
+    added, deleted, modified = [], [], []
+
+    if attrs is None:
+        # Calculate "all attrs" based on the node attrs and the given attr-maps
+        attrs = set()
+        attrs.update( set(mapA.keys()).union(set(mapA.keys())) )
+        #
+        mapA_vals = set(mapA.values())
+        mapB_vals = set(mapB.values())        
+        for keyA in nodeA.keys():
+            if keyA not in mapA_vals:
+                attrs.add(keyA)
+        for keyB in nodeB.keys():
+            if keyB not in mapB_vals:
+                attrs.add(keyB)
+        attrs = sorted(attrs) 
 
     # 1. Regular attributes
-    attrs.remove('tags')
-
     for attr in attrs:
-        if attr in exclude_attrs:
+        if attr in exclude_attrs or attr in listlike_attrs or attr in setlike_attrs:
             continue
 
         attrA = mapA.get(attr, attr)
         attrB = mapB.get(attr, attr)
 
-        if nodeA.get(attrA) is None:
-            attributes[attr] = {'value': nodeB[attr]}
+        if nodeA.get(attrA) is None and nodeB.get(attrB) is None:
+            print("WARNING requested diff for attr " + attr + "that don't exist")
+            continue
+        elif nodeA.get(attrA) is None:
+            attributes[attr] = {'value': nodeB[attrB]}
             added.append(attr)
-        elif nodeB.get(attr) is None:
-            attributes[attr] = {'old_value': nodeA[attr]}
+        elif nodeB.get(attrB) is None:
+            attributes[attr] = {'old_value': nodeA[attrA]}
             deleted.append(attr)
-        elif nodeA[attr] == nodeB[attr]:
+        elif nodeA[attrA] == nodeB[attrB]:
             # no difference
-            attributes[attr] = {'value': nodeB[attr]}
+            attributes[attr] = {'value': nodeB[attrB]}
         else:
             # both exist and there is a difference
-            attributes[attr] = {'old_value': nodeA[attr], 'value': nodeB[attr]}
+            attributes[attr] = {'old_value': nodeA[attrA], 'value': nodeB[attrB]}
             modified.append(attr)
+
+    # 2. Set-like attributes
+    for attr in setlike_attrs:
+        attrA = mapA.get(attr, attr)
+        attrB = mapB.get(attr, attr)
+
+        if nodeA.get(attrA) is None and nodeB.get(attrB) is None:
+            print("WARNING requested diff for attr " + attr + "that don't exist")
+            continue
+        elif nodeA.get(attrA) is None:
+            attributes[attr] = {'value': nodeB[attrB]}
+            added.append(attr)
+        elif nodeB.get(attrB) is None:
+            attributes[attr] = {'old_value': nodeA[attrA]}
+            deleted.append(attr)
+        else:
+            # both attributes exist
+            valueA_set = set(nodeA.get(attrA, []))
+            valueB_set = set(nodeB.get(attrB, []))
+            if valueA_set == valueB_set:
+                attributes[attr] = {'value': nodeB[attrB]}
+            else:
+                attributes[attr] = {
+                    'old_value': nodeA[attrA],
+                    'value': nodeB[attrB],
+                    'added': sorted(valueB_set - valueA_set),
+                    'deleted': sorted(valueA_set - valueB_set),
+                }
+                modified.append(attr)
+
+    # 3. List-like attributes
+
+
 
     return {
         'added': added,
