@@ -10,7 +10,6 @@ Contents
    use_cases
    specs
    tree_diffs
-   diff_format
    hellodoctest
    installation
    usage

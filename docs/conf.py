@@ -56,3 +56,4 @@ napoleon_use_param = False
 
 source_suffix = ['.md', '.rst', '.ipynb']
 
+linkcheck_ignore = [r'http://localhost:.*?', r'https://docs.google.com/spreadsheets.*?']
