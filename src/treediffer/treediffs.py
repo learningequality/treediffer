@@ -12,9 +12,11 @@ def compare_node_attrs(nodeA, nodeB, attrs):
     return diff
 
 
-def diff_lists(listA, listB, parent_idA, parent_idB, attrs=['title'], mapA={}, mapB={}, recursive=True):
+def diff_children(listA, listB, parent_idA, parent_idB,
+    attrs=['title'], mapA={}, mapB={}, recursive=True
+):
     """
-    Compute the diff between the nodes in `listA` and the noddes in `listB`.
+    Compute the diff between the nodes in `listA` and the nodes in `listB`.
     Args:
       - attrs (list(str)): what attributes to check in comparison
       - mapA: map of diff attribues to listA node attributes
@@ -121,7 +123,7 @@ def diff_lists(listA, listB, parent_idA, parent_idB, attrs=['title'], mapA={}, m
 
 def diff_node(nodeA, nodeB,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
-    listlike_attrs=['assesment_items'],
+    assesment_items_key='assesment_items',
     setlike_attrs=['tags', 'files'],
 ):
     # Get nodeA info
@@ -142,9 +144,7 @@ def diff_node(nodeA, nodeB,
 
 def diff_attributes(nodeA, nodeB,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
-    listlike_attrs=['assesment_items'],
-    setlike_attrs=['tags', 'files'],
-):
+    assesment_items_key='assesment_items', setlike_attrs=['tags', 'files']):
     """
     Compute the diff between the attrributes of `nodeA` and `nodeB`.
     Returns a dict { added=[], deleted=[], modifeid=[], attributes={} }
@@ -169,7 +169,7 @@ def diff_attributes(nodeA, nodeB,
 
     # 1. Regular attributes
     for attr in attrs:
-        if attr in exclude_attrs or attr in listlike_attrs or attr in setlike_attrs:
+        if attr in exclude_attrs or attr in setlike_attrs or attr == assesment_items_key:
             continue
 
         attrA = mapA.get(attr, attr)
@@ -221,10 +221,26 @@ def diff_attributes(nodeA, nodeB,
                 }
                 modified.append(attr)
 
-    # 3. List-like attributes
-
-
-
+    # 3. Assesment items
+    if assesment_items_key in nodeA and assesment_items_key in nodeB:
+        listA = nodeA[assesment_items_key]
+        listB = nodeB[assesment_items_key]
+        node_id_keyA = mapA.get('node_id', 'node_id')
+        node_idA = nodeA[node_id_keyA]
+        node_id_keyB = mapB.get('node_id', 'node_id')
+        node_idB = nodeB[node_id_keyB]
+        ais_diff = diff_assesment_items(listA, listB, node_idA, node_idB,
+                                        mapA=mapA, mapB=mapB, exclude_attrs=exclude_attrs)
+        if diff_atts['added'] or diff_atts['deleted'] or diff_atts['moved'] or diff_atts['modified']:
+            modified.append(assesment_items_key)
+            attributes[assesment_items_key] = {
+                'old_value': nodeA[assesment_items_key],
+                'value': nodeB[assesment_items_key],
+                'added': diff_atts['added'],
+                'deleted': diff_atts['deleted'],
+                'moved': diff_atts['moved'],
+                'modified': diff_atts['modified'],
+            }
     return {
         'added': added,
         'deleted': deleted,
@@ -232,6 +248,17 @@ def diff_attributes(nodeA, nodeB,
         'attributes': attributes,
     }
 
+def diff_assesment_items(listA, listB, parent_idA, parent_idB, exclude_attrs=[], mapA={}, mapB={}):
+    added = []
+    deleted = []
+    moved = []
+    modified = []
+    return {
+        'added': added,
+        'deleted': deleted,
+        'moved': moved,
+        'modified': modified
+    }
 
 
 def compare_subtrees(nodeA, nodeB, attrs=['title'], mapA={}, mapB={}):
@@ -253,10 +280,15 @@ def compare_subtrees(nodeA, nodeB, attrs=['title'], mapA={}, mapB={}):
 
 
 def treediff(oldtree, newtree, attrs=None, exclude_attrs=[], mapA={}, mapB={},
-             listlike_attrs=['questions'],  setlike_attrs=['tags', 'files']):
+             assesment_items_key='assesment_items', setlike_attrs=['tags', 'files']):
     """
     Compute the differences between `newtree` and `oldtree`.
     """
+    # 1. compute the tree diff
+
+    # 2. detect node moves
+
+    # 3. summarize?
     diff_dict = {
         "nodes_deleted": {},
         "nodes_added": {},

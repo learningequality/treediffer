@@ -36,3 +36,10 @@ applied as a "patch" to the `oldtree` should produce the `newtree`.
 structural annotations like  `parent_id` and all node attributes like title,
 description, files, assessment items, tags, etc., even if they haven't changed
 to allow for easy display of diffs and post-processing tasks.
+
+
+
+## Diff limitations
+
+ - Will not recognize assessment items that are moved between exercices
+ 

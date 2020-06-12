@@ -2,7 +2,7 @@ import pprint
 from treediffer.diffutils import contains
 
 # SUT
-from treediffer.treediffs import diff_lists
+from treediffer.treediffs import diff_children
 
 
 
@@ -16,7 +16,7 @@ DEBUG_MODE = False
 def test_list_noop(sample_children):
     assert len(sample_children) == 3
 
-    diff = diff_lists(sample_children, sample_children, 'p1', 'p2')
+    diff = diff_children(sample_children, sample_children, 'p1', 'p2')
 
     nodes_deleted = diff['nodes_deleted']
     assert len(nodes_deleted) == 0
@@ -29,7 +29,7 @@ def test_list_add_and_rm(sample_children, sample_children_add_and_rm):
     assert len(sample_children) == 3
     assert len(sample_children_add_and_rm) == 5
 
-    diff = diff_lists(sample_children, sample_children_add_and_rm, 'p1', 'p2')
+    diff = diff_children(sample_children, sample_children_add_and_rm, 'p1', 'p2')
 
     nodes_deleted = diff['nodes_deleted']
     assert len(nodes_deleted) == 1
@@ -50,7 +50,7 @@ def test_list_reorder(sample_children, sample_children_reordered):
     assert len(sample_children) == 3
     assert len(sample_children_reordered) == 3
 
-    diff = diff_lists(sample_children, sample_children_reordered, 'p1', 'p2')
+    diff = diff_children(sample_children, sample_children_reordered, 'p1', 'p2')
 
     nodes_deleted = diff['nodes_deleted']
     assert len(nodes_deleted) == 2
