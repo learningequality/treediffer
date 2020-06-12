@@ -12,22 +12,22 @@ def compare_node_attrs(nodeA, nodeB, attrs):
     return diff
 
 
-def diff_children(listA, listB, parent_idA, parent_idB,
-    attrs=['title'], mapA={}, mapB={}, recursive=True
-):
+def diff_children(parent_idA, childrenA, parent_idB, childrenB,
+    attrs=None, exclude_attrs=[], mapA={}, mapB={},
+    assesment_items_key='assesment_items', setlike_attrs=['tags', 'files']):
     """
-    Compute the diff between the nodes in `listA` and the nodes in `listB`.
+    Compute the diff between the nodes in `childrenA` and the nodes in `childrenB`.
     Args:
       - attrs (list(str)): what attributes to check in comparison
-      - mapA: map of diff attribues to listA node attributes
-      - mapB: map of diff attribues to listB node attributes
+      - mapA: map of diff attribues to childrenA node attributes
+      - mapB: map of diff attribues to childrenB node attributes
       - recursive (bool): check just one level of children, or all levels of children?
     """
-    # 1A. prepropocess listA nodes
+    # 1A. prepropocess childrenA nodes
     itemsA = []
     node_idsA = set()
     content_idsA = set()
-    for i, nodeA in enumerate(listA):
+    for i, nodeA in enumerate(childrenA):
         node_id_keyA = mapA.get('node_id', 'node_id')
         content_id_keyA = mapA.get('content_id', 'content_id')
         node_idA, content_idA = nodeA[node_id_keyA], nodeA[content_id_keyA]
@@ -46,11 +46,11 @@ def diff_children(listA, listB, parent_idA, parent_idB,
         node_idsA.add(node_idA)
         content_idsA.add(content_idA)
 
-    # 1B. prepropocess listB nodes
+    # 1B. prepropocess childrenB nodes
     itemsB = []
     node_idsB = set()
     content_idsB = set()
-    for j, nodeB in enumerate(listB):
+    for j, nodeB in enumerate(childrenB):
         node_id_keyB = mapB.get('node_id', 'node_id')
         content_id_keyB = mapB.get('content_id', 'content_id')
         node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
@@ -124,8 +124,7 @@ def diff_children(listA, listB, parent_idA, parent_idB,
 def diff_node(nodeA, nodeB,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
     assesment_items_key='assesment_items',
-    setlike_attrs=['tags', 'files'],
-):
+    setlike_attrs=['tags', 'files']):
     # Get nodeA info
     node_id_keyA = mapA.get('node_id', 'node_id')
     content_id_keyA = mapA.get('content_id', 'content_id')
@@ -223,13 +222,13 @@ def diff_attributes(nodeA, nodeB,
 
     # 3. Assesment items
     if assesment_items_key in nodeA and assesment_items_key in nodeB:
-        listA = nodeA[assesment_items_key]
-        listB = nodeB[assesment_items_key]
         node_id_keyA = mapA.get('node_id', 'node_id')
         node_idA = nodeA[node_id_keyA]
+        listA = nodeA[assesment_items_key]
         node_id_keyB = mapB.get('node_id', 'node_id')
         node_idB = nodeB[node_id_keyB]
-        ais_diff = diff_assesment_items(listA, listB, node_idA, node_idB,
+        listB = nodeB[assesment_items_key]
+        ais_diff = diff_assesment_items(node_idA, listA, node_idB, listB,
                                         mapA=mapA, mapB=mapB, exclude_attrs=exclude_attrs)
         if diff_atts['added'] or diff_atts['deleted'] or diff_atts['moved'] or diff_atts['modified']:
             modified.append(assesment_items_key)
@@ -248,7 +247,7 @@ def diff_attributes(nodeA, nodeB,
         'attributes': attributes,
     }
 
-def diff_assesment_items(listA, listB, parent_idA, parent_idB, exclude_attrs=[], mapA={}, mapB={}):
+def diff_assesment_items(parent_idA, listA, parent_idB, listB, exclude_attrs=[], mapA={}, mapB={}):
     added = []
     deleted = []
     moved = []
