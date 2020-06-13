@@ -243,7 +243,7 @@ def diff_attributes(nodeA, nodeB,
                 'value': nodeB['files'],
             }
 
-    # 4. ASSESSMENT items
+    # 4. assessment items
     if assessment_items_key and assessment_items_key in nodeA and assessment_items_key in nodeB:
         node_id_keyA = mapA.get('node_id', 'node_id')
         node_idA = nodeA[node_id_keyA]
@@ -296,7 +296,7 @@ def diff_files(listA, listB):
 
 def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
     """
-    Compute the diff between the lists of ASSESSMENT items `listA` and `listB`,
+    Compute the diff between the lists of assessment items `listA` and `listB`,
     using the key `assessment_id` to detect modifications and reorderings.
     Note: the code assumes there are no duplicate `assessment_id`s in a list.
     """
@@ -313,7 +313,7 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
         itemA = dict(
             sort_order=sort_orderA,
             assessment_id=assessment_idA,
-            ASSESSMENT_item=aiA,
+            assessment_item=aiA,
         )
         itemsA.append(itemA)
         assessment_idsA.add(assessment_idA)
@@ -331,7 +331,7 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
         itemB = dict(
             sort_order=sort_orderB,
             assessment_id=assessment_idB,
-            ASSESSMENT_item=aiB,
+            assessment_item=aiB,
         )
         itemsB.append(itemB)
         assessment_idsB.add(assessment_idB)
@@ -348,8 +348,8 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
             common_item_tuples.append((itA, itB))
     moved, modified = [], []
     for itA, itB in common_item_tuples:
-        # obtain the non-sort_order subset of the ASSESSMENT_item's attrubutes
-        aiA, aiB = itA['ASSESSMENT_item'], itB['ASSESSMENT_item']
+        # obtain the non-sort_order subset of the assessment_item's attrubutes
+        aiA, aiB = itA['assessment_item'], itB['assessment_item']
         aiAattrs, aiBattrs = copy.deepcopy(aiA), copy.deepcopy(aiB)
         sort_order_keyA = mapA.get('sort_order', 'sort_order')
         if sort_order_keyA in aiAattrs:
@@ -358,18 +358,25 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
         if sort_order_keyB in aiBattrs:
             aiBattrs.pop(sort_order_keyB)
 
-        # TODO pop files
+        if 'files' in aiA and 'files' in aiB:
+            aiAattrs.pop('files')
+            aiBattrs.pop('files')
+            files_diff = diff_files(aiA['files'], aiB['files'])
+            if files_diff['added'] or files_diff['deleted']:
+                files_changed = True
+            else:
+                files_changed = False
 
-        if aiAattrs == aiBattrs and itA['sort_order'] == itB['sort_order']:
+        if aiAattrs == aiBattrs and itA['sort_order'] == itB['sort_order'] and not files_changed:
             continue  # same attrs and same sort order, so not modified or moved
-        elif aiAattrs == aiBattrs and itA['sort_order'] != itB['sort_order']:
+        elif aiAattrs == aiBattrs and not files_changed and itA['sort_order'] != itB['sort_order']:
             moved.append(aiB)
         else:
             modified.append(aiB)
 
     # format for diff output
-    added = [item['ASSESSMENT_item'] for item in added_items]
-    deleted = [item['ASSESSMENT_item'] for item in deleted_items]
+    added = [item['assessment_item'] for item in added_items]
+    deleted = [item['assessment_item'] for item in deleted_items]
 
     return {
         'added': added,

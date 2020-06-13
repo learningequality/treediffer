@@ -204,7 +204,24 @@ def sample_assessment_items():
         {
             "assessment_id": "aid1",
             "type": "single_selection",
-            "files": [],
+            "files": [
+                {
+                    "filename": "md5(file1.content).ext",
+                    "size": 1001,
+                    "preset": "file1_preset",
+                    "original_filename": "orginal_name_of_file1.ext",
+                    "language": "en",
+                    "source_url": "http://src.org/file1.ext",
+                },
+                {
+                    "filename": "md5(file2.content).ext",
+                    "size": 1002,
+                    "preset": "file2_preset",
+                    "original_filename": "orginal_name_of_file2.ext",
+                    "language": "en",
+                    "source_url": "http://src.org/file2.ext",
+                },
+            ],
             "question": "Question one",
             "hints": ["q1hint1", "q1hint2"],
             "answers": ["q1ansewer1", "q1answer2"],
@@ -278,6 +295,33 @@ def sample_assessment_items_with_modifications(sample_assessment_items):
         sample_assessment_items[0],
         new_ai2,
         new_ai3,
+    ]
+
+@pytest.fixture
+def sample_assessment_items_with_file_modifications(sample_assessment_items):
+    new_ai1 = copy.deepcopy(sample_assessment_items[0])
+    new_ai1['files'] = [
+        {
+            "filename": "md5(file1.content).ext",
+            "size": 1001,
+            "preset": "file1_preset",
+            "original_filename": "orginal_name_of_file1.ext",
+            "language": "en",
+            "source_url": "http://src.org/file1.ext",
+        },
+        {
+            "filename": "md5(file4.content).ext",
+            "size": 1004,
+            "preset": "file4_preset",
+            "original_filename": "orginal_name_of_file4.ext",
+            "language": "en",
+            "source_url": "http://src.org/file4.ext",
+        },
+    ]
+    return [
+        new_ai1,
+        sample_assessment_items[1],
+        sample_assessment_items[2],
     ]
 
 

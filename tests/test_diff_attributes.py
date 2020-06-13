@@ -215,3 +215,28 @@ def test_assessment_items_with_modifications(sample_node_with_assessment_items, 
     assert len(ais_diff['deleted']) == 0
     assert len(ais_diff['modified']) == 2
     assert len(ais_diff['moved']) == 0
+
+
+def test_assessment_items_with_file_modifications(sample_node_with_assessment_items, sample_assessment_items_with_file_modifications):
+    assert len(sample_node_with_assessment_items['assessment_items']) == 3
+    assert len(sample_assessment_items_with_file_modifications) == 3
+    modified_node = copy.deepcopy(sample_node_with_assessment_items)
+    modified_node['assessment_items'] = sample_assessment_items_with_file_modifications
+
+    attrs_diff = diff_attributes(sample_node_with_assessment_items, modified_node)
+    # pprint.pprint(attrs_diff)
+
+    modified = attrs_diff['modified']
+    assert len(modified) == 1
+    assert 'assessment_items' in modified
+
+    attributes = attrs_diff['attributes']
+    ais_diff = attributes['assessment_items']
+    assert ais_diff['old_value'] == sample_node_with_assessment_items['assessment_items']
+    assert ais_diff['value'] == modified_node['assessment_items']
+    assert len(ais_diff['added']) == 0
+    assert len(ais_diff['deleted']) == 0
+    assert len(ais_diff['modified']) == 1
+    assert len(ais_diff['moved']) == 0
+
+

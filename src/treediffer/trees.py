@@ -47,7 +47,7 @@ assessment_items_key = None
 
 setlike_attrs = [
     "tags",
-    "assessmentmetadata",  # ASSESSMENT items are actually list-like, but handle as a set for simplicity
+    "assessmentmetadata",  # assessment items are actually list-like, but handle as a set for simplicity
 ]
 
 kolibri_map = {
