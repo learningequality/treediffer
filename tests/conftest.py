@@ -195,11 +195,11 @@ def sample_node_with_files(sample_node, sample_files):
 
 
 
-# ASSESMENT ITEMS FIXTURES
+# ASSESSMENT ITEMS FIXTURES
 ################################################################################
 
 @pytest.fixture
-def sample_assesment_items():
+def sample_assessment_items():
     return [
         {
             "assessment_id": "aid1",
@@ -229,9 +229,9 @@ def sample_assesment_items():
 
 
 @pytest.fixture
-def sample_assesment_items_add_and_rm(sample_assesment_items):
+def sample_assessment_items_add_and_rm(sample_assessment_items):
     return [
-        sample_assesment_items[0],
+        sample_assessment_items[0],
         {
             "assessment_id": "aid4",
             "type": "input_question",
@@ -240,7 +240,7 @@ def sample_assesment_items_add_and_rm(sample_assesment_items):
             "hints": ["q4hint1", "q4hint2"],
             "answers": ["42"],
         },
-        sample_assesment_items[2],
+        sample_assessment_items[2],
         {
             "assessment_id": "aid5",
             "type": "single_selection",
@@ -261,31 +261,32 @@ def sample_assesment_items_add_and_rm(sample_assesment_items):
 
 
 @pytest.fixture
-def sample_assesment_items_reordered(sample_assesment_items):
+def sample_assessment_items_reordered(sample_assessment_items):
     return [
-        sample_assesment_items[0],
-        sample_assesment_items[2],
-        sample_assesment_items[1],
+        sample_assessment_items[0],
+        sample_assessment_items[2],
+        sample_assessment_items[1],
     ]
 
-
-def sample_assesment_items_with_modifications(sample_assesment_items):
-    new_ai2 = copy.deepcopy(sample_assesment_items[1])
+@pytest.fixture
+def sample_assessment_items_with_modifications(sample_assessment_items):
+    new_ai2 = copy.deepcopy(sample_assessment_items[1])
     new_ai2['question'] = "Modified question 2"
-    new_ai3 = copy.deepcopy(sample_assesment_items[1])
+    new_ai3 = copy.deepcopy(sample_assessment_items[2])
     new_ai3['hints'] = ["q3hint1", "q3newhint"]
     return [
-        sample_assesment_items[0],
+        sample_assessment_items[0],
         new_ai2,
         new_ai3,
     ]
 
 
 @pytest.fixture
-def sample_node_with_assesment_items(sample_node, sample_assesment_items):
+def sample_node_with_assessment_items(sample_node, sample_assessment_items):
     node = sample_node
-    node["assesment_items"] = sample_assesment_items
+    node["assessment_items"] = sample_assessment_items
     return node
+
 
 
 # TREE FIXTURES

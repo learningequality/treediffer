@@ -133,20 +133,24 @@ nodes_modified = [
                 "tags_added": ['newtag3', 'newtag4'],
             },
             "assessment_items": {                                               # list-like
+                "old_value": [
+                    {"id": "aiid1", "assessment_id": 'q1', ... },
+                    {"id": "aiid2", "assessment_id": 'q2', ... },
+                    {"id": "aiid3", "assessment_id": 'q3', ... }
+                ],
                 "value": [
                     {"id": "aiid1", "assessment_id": 'q1', ... },
+                    {"id": "aiid4", "assessment_id": 'q4', ... },
                     {"id": "aiid3", "assessment_id": 'q3', ... },
-                    {"id": "aiid4", "assessment_id": 'q4', ... }
                 ],
-                "assessment_items_deleted": [
+                "deleted": [
                     {"id": "aiid2", "assessment_id": 'q2', ... },
                 ]
-                "assessment_items_added": [
-                    {"sort_order", 3.0, "id": "aiid3", "assessment_id": 'q3', ... },
-                    {"sort_order", 4.0, "id": "aiid4", "assessment_id": 'q4', ... },
+                "added": [
+                    {"id": "aiid4", "assessment_id": 'q4', ... },
                 ]
-                "assessment_items_moved": [],
-                "assessment_items_modified": [],
+                "moved": [],
+                "modified": [],
             },
     },
     {},
@@ -154,11 +158,6 @@ nodes_modified = [
     {},
 ]
 ```
-
-Note the `assessment_items` dict is isomorphic to the outer tree diff format,
-with `{type}_deleted`, `{type}_added`, `{type}_moved`, and `{type}_modified` take
-now refer to `assesment_items` instead of content node children.
-
 
 
 
