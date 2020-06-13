@@ -1,7 +1,7 @@
 import pprint
 import copy
 
-from .diffutils import contains
+from .diffutils import contains, findby
 
 def compare_node_attrs(nodeA, nodeB, attrs):
     diff = []
@@ -73,7 +73,7 @@ def diff_children(parent_idA, childrenA, parent_idB, childrenB,
     # 3. check for modified nodes
     common_item_tuples = []
     for itA in itemsA:
-        itB = contains(itemsB, itA, by=('node_id'))
+        itB = findby(itemsB, itA, by=('node_id'))
         if itB:
             common_item_tuples.append((itA, itB))
     nodes_modified = []
@@ -343,7 +343,7 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
     # 3. check for moves and modifications in common items
     common_item_tuples = []
     for itA in itemsA:
-        itB = contains(itemsB, itA, by=('assessment_id'))
+        itB = findby(itemsB, itA, by=('assessment_id'))
         if itB:
             common_item_tuples.append((itA, itB))
     moved, modified = [], []

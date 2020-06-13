@@ -1,7 +1,6 @@
 import pprint
 
 # from treediffer.treediffs import treediff
-from treediffer.diffutils import contains
 
 DEBUG_MODE = True
 

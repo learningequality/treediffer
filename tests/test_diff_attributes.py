@@ -1,6 +1,5 @@
 import copy
 import pprint
-from treediffer.diffutils import contains
 
 # SUT
 from treediffer.treediffs import diff_attributes

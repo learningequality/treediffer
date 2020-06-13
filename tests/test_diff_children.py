@@ -1,5 +1,5 @@
 import pprint
-from treediffer.diffutils import contains
+from treediffer.diffutils import contains, findby
 
 # SUT
 from treediffer.treediffs import diff_children
@@ -58,8 +58,8 @@ def test_children_reorder(sample_children, sample_children_reordered):
 
     nodes_added = diff['nodes_added']
     assert len(nodes_added) == 2
-    n2 = contains(nodes_added, {'node_id': 'nid2'}, by='node_id')
-    n3 = contains(nodes_added, {'node_id': 'nid3'}, by='node_id')
+    n2 = findby(nodes_added, {'node_id': 'nid2'}, by='node_id')
+    n3 = findby(nodes_added, {'node_id': 'nid3'}, by='node_id')
     assert n2, n3
     assert n2['sort_order'] > n3['sort_order'], 'after reordering nid2 should be after nid3'
 
@@ -79,10 +79,10 @@ def test_children_with_modifications(sample_children, sample_children_with_modif
 
     nodes_modified = diff['nodes_modified']
     assert len(nodes_modified) == 2
-    n2 = contains(nodes_modified, {'node_id': 'nid2'}, by='node_id')
+    n2 = findby(nodes_modified, {'node_id': 'nid2'}, by='node_id')
     n2['attributes']['title']['old_value'] = sample_children[2]['title']
     n2['attributes']['title']['value'] = sample_children_with_modifications[2]['title']
-    n3 = contains(nodes_modified, {'node_id': 'nid3'}, by='node_id')
+    n3 = findby(nodes_modified, {'node_id': 'nid3'}, by='node_id')
     n3['attributes']['description']['old_value'] = sample_children[2]['description']
     n3['attributes']['description']['value'] = sample_children_with_modifications[2]['description']
 

@@ -14,27 +14,67 @@ def list2dict(alist, by="node_id"):
     return adict
 
 
-def contains(container, item, by="node_id"):
+def findallby(container, item, by="node_id"):
     """
-    Check if item appears in container (list or dict) based on the key in `by`.
-    Return first occurence of the item if found or None if not-found.
+    Find all occurences of item in container (list or dict) based on key `by`.
+    Return a list of occurences or an empty list if not found.
     """
+    results = []
     if isinstance(container, dict):
         container = container.values()
     if type(by) == str:
         for el in container:
             if el[by] == item[by]:
-                return el
-        return None
+                results.append(el)
     elif type(by) == tuple:
         keys = by
         for el in container:
             if all(el[key] == item[key] for key in keys):
-                return el
-        return None
+                results.append(el)
     else:
         raise ValueError('Match keys `by` support only strings or tupes.')
+    return results
 
+
+def findby(container, item, by="node_id"):
+    """
+    Look for item in the container (list or dict) based on the key in `by`.
+    Return first occurence of the item if found or None if not found.
+    """
+    results = findallby(container, item, by=by)
+    if results:
+        return results[0]
+    else:
+        return None
+
+
+def contains(container, item, by="node_id"):
+    """
+    Check if item appears in container (list or dict) based on the key in `by`.
+    """
+    match = findby(container, item, by=by)
+    if match:
+        return True
+    else:
+        return False
+
+
+
+# TREE UTILS
+################################################################################
+
+def subtreefindallby(subtree, value, by="node_id"):
+    """
+    Returns list of nodes in `subtree` that have attribute `by` equal to `value`.
+    """
+    results = []
+    if subtree[by] == value:
+        results.append(subtree)
+    if 'children' in subtree:
+        for child in subtree['children']:
+            child_restuls = subtreefindallby(child, value, by)
+            results.extend(child_restuls)
+    return results
 
 
 
