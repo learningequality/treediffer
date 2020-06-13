@@ -108,7 +108,7 @@ def test_add_and_rm_files(sample_node_with_files, sample_files_add_and_rm):
     filesB = sample_files_add_and_rm
 
     attrs_diff = diff_attributes(sample_node_with_files, modified_node)
-    pprint.pprint(attrs_diff)
+    # pprint.pprint(attrs_diff)
 
     modified = attrs_diff['modified']
     assert len(modified) == 1

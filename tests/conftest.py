@@ -1,5 +1,5 @@
 import pytest
-
+import copy
 
 # LIST-LIKE FIXTURES
 ################################################################################
@@ -28,26 +28,16 @@ def sample_children():
     ]
 
 @pytest.fixture
-def sample_children_add_and_rm():
+def sample_children_add_and_rm(sample_children):
     return [
-        {
-            "node_id": "nid1",
-            "content_id": "cid1",
-            "title": "First node",
-            "description": "The descr. of the first node in the children.",
-        },
+        sample_children[0],
         {
             "node_id": "nid4",
             "content_id": "cid4",
             "title": "Fourth node",
             "description": "This node was added in the second position.",
         },
-        {
-            "node_id": "nid3",
-            "content_id": "cid3",
-            "title": "Third node",
-            "description": "The third node descr. is just the same thing again.",
-        },
+        sample_children[2],
         {
             "node_id": "nid5",
             "content_id": "cid5",
@@ -62,6 +52,18 @@ def sample_children_add_and_rm():
         },
     ]
 
+@pytest.fixture
+def sample_children_with_modifications(sample_children):
+    new_node2 = copy.deepcopy(sample_children[1])
+    new_node2['title'] = "Second node (modified)"
+    new_node3 = copy.deepcopy(sample_children[2])
+    new_node3['description'] = "The modified descr. of the third node."
+    return [
+        sample_children[0],
+        new_node2,
+        new_node3,
+    ]
+
 
 @pytest.fixture
 def sample_children_reordered(sample_children):
@@ -74,7 +76,6 @@ def sample_children_reordered(sample_children):
 
 # NODE FIXTURES
 ################################################################################
-
 
 @pytest.fixture
 def sample_node():
@@ -114,6 +115,10 @@ def sample_node_with_tags(sample_node, sample_tags):
     return node
 
 
+
+# FILES FIXTURES
+################################################################################
+
 @pytest.fixture
 def sample_files():
     return [
@@ -144,16 +149,9 @@ def sample_files():
     ]
 
 @pytest.fixture
-def sample_files_add_and_rm():
+def sample_files_add_and_rm(sample_files):
     return [
-        {
-            "filename": "md5(file1.content).ext",
-            "size": 1001,
-            "preset": "file1_preset",
-            "original_filename": "orginal_name_of_file1.ext",
-            "language": "en",
-            "source_url": "http://src.org/file1.ext",
-        },
+        sample_files[0],
         {
             "filename": "md5(file4.content).ext",
             "size": 1004,
@@ -162,14 +160,7 @@ def sample_files_add_and_rm():
             "language": "en",
             "source_url": "http://src.org/file4.ext",
         },
-        {
-            "filename": "md5(file3.content).ext",
-            "size": 1003,
-            "preset": "file3_preset",
-            "original_filename": "orginal_name_of_file3.ext",
-            "language": "en",
-            "source_url": "http://src.org/file3.ext",
-        },
+        sample_files[2],
         {
             "filename": "md5(file5.content).ext",
             "size": 1005,
@@ -189,32 +180,11 @@ def sample_files_add_and_rm():
     ]
 
 @pytest.fixture
-def sample_files_reordered():
+def sample_files_reordered(sample_files):
     return [
-        {
-            "filename": "md5(file1.content).ext",
-            "size": 1001,
-            "preset": "file1_preset",
-            "original_filename": "orginal_name_of_file1.ext",
-            "language": "en",
-            "source_url": "http://src.org/file1.ext",
-        },
-        {
-            "filename": "md5(file3.content).ext",
-            "size": 1003,
-            "preset": "file3_preset",
-            "original_filename": "orginal_name_of_file3.ext",
-            "language": "en",
-            "source_url": "http://src.org/file3.ext",
-        },
-        {
-            "filename": "md5(file2.content).ext",
-            "size": 1002,
-            "preset": "file2_preset",
-            "original_filename": "orginal_name_of_file2.ext",
-            "language": "en",
-            "source_url": "http://src.org/file2.ext",
-        },
+        sample_files[0],
+        sample_files[2],
+        sample_files[1],
     ]
 
 @pytest.fixture
@@ -225,6 +195,97 @@ def sample_node_with_files(sample_node, sample_files):
 
 
 
+# ASSESMENT ITEMS FIXTURES
+################################################################################
+
+@pytest.fixture
+def sample_assesment_items():
+    return [
+        {
+            "assessment_id": "aid1",
+            "type": "single_selection",
+            "files": [],
+            "question": "Question one",
+            "hints": ["q1hint1", "q1hint2"],
+            "answers": ["q1ansewer1", "q1answer2"],
+        },
+        {
+            "assessment_id": "aid2",
+            "type": "multiple_selection",
+            "files": [],
+            "question": "Question two",
+            "hints": ["q2hint1", "q2hint2"],
+            "answers": ["q2ansewer1", "q2answer2"],
+        },
+        {
+            "assessment_id": "aid3",
+            "type": "single_selection",
+            "files": [],
+            "question": "Question three",
+            "hints": ["q3hint1", "q3hint2"],
+            "answers": ["q3ansewer1", "q3answer2"],
+        },
+    ]
+
+
+@pytest.fixture
+def sample_assesment_items_add_and_rm(sample_assesment_items):
+    return [
+        sample_assesment_items[0],
+        {
+            "assessment_id": "aid4",
+            "type": "input_question",
+            "files": [],
+            "question": "Question four",
+            "hints": ["q4hint1", "q4hint2"],
+            "answers": ["42"],
+        },
+        sample_assesment_items[2],
+        {
+            "assessment_id": "aid5",
+            "type": "single_selection",
+            "files": [],
+            "question": "Question five",
+            "hints": ["q5hint1", "q5hint2"],
+            "answers": ["q5ansewer1", "q5answer2"],
+        },
+        {
+            "assessment_id": "aid6",
+            "type": "single_selection",
+            "files": [],
+            "question": "Question six",
+            "hints": ["q6hint1", "q6hint2"],
+            "answers": ["q6ansewer1", "q6answer2"],
+        },
+    ]
+
+
+@pytest.fixture
+def sample_assesment_items_reordered(sample_assesment_items):
+    return [
+        sample_assesment_items[0],
+        sample_assesment_items[2],
+        sample_assesment_items[1],
+    ]
+
+
+def sample_assesment_items_with_modifications(sample_assesment_items):
+    new_ai2 = copy.deepcopy(sample_assesment_items[1])
+    new_ai2['question'] = "Modified question 2"
+    new_ai3 = copy.deepcopy(sample_assesment_items[1])
+    new_ai3['hints'] = ["q3hint1", "q3newhint"]
+    return [
+        sample_assesment_items[0],
+        new_ai2,
+        new_ai3,
+    ]
+
+
+@pytest.fixture
+def sample_node_with_assesment_items(sample_node, sample_assesment_items):
+    node = sample_node
+    node["assesment_items"] = sample_assesment_items
+    return node
 
 
 # TREE FIXTURES

@@ -14,7 +14,7 @@ def compare_node_attrs(nodeA, nodeB, attrs):
 
 def diff_children(parent_idA, childrenA, parent_idB, childrenB,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
-    assesment_items_key='assesment_items', setlike_attrs=['tags', 'files']):
+    assesment_items_key='assesment_items', setlike_attrs=['tags']):
     """
     Compute the diff between the nodes in `childrenA` and the nodes in `childrenB`.
     Args:
@@ -73,7 +73,26 @@ def diff_children(parent_idA, childrenA, parent_idB, childrenB,
     deleted_items = [itA for itA in itemsA if not contains(itemsB, itA, by=('node_id','sort_order'))]
     added_items = [itB for itB in itemsB if not contains(itemsA, itB, by=('node_id','sort_order'))]
 
-    # 3. check modifications
+    # 3. check for modified nodes
+    common_item_tuples = []
+    for itA in itemsA:
+        itB = contains(itemsB, itA, by=('node_id'))
+        if itB:
+            common_item_tuples.append((itA, itB))
+    nodes_modified = []
+    for itA, itB in common_item_tuples:
+        attrs_diff = diff_attributes(itA['node'], itB['node'],
+            attrs=attrs, exclude_attrs=exclude_attrs, mapA=mapA, mapB=mapB,
+            assesment_items_key=assesment_items_key, setlike_attrs=setlike_attrs)
+        if attrs_diff['added'] or attrs_diff['deleted'] or attrs_diff['modified']:
+            node = dict(
+                node_id=itB['node_id'],
+                parent_id=itB['parent_id'],
+                sort_order=itB['sort_order'],
+                content_id=itB['content_id'],
+                attributes=attrs_diff['attributes']
+            )
+            nodes_modified.append(node)
 
     # 4. recurse
 
@@ -109,6 +128,7 @@ def diff_children(parent_idA, childrenA, parent_idB, childrenB,
     diff = dict(
         nodes_deleted=nodes_deleted,
         nodes_added=nodes_added,
+        nodes_modified=nodes_modified,
     )
 
     # for node_pair in node_pairs:
@@ -198,7 +218,6 @@ def diff_attributes(nodeA, nodeB,
         attrB = mapB.get(attr, attr)
 
         if nodeA.get(attrA) is None and nodeB.get(attrB) is None:
-            print("WARNING requested diff for attr " + attr + " that don't exist")
             continue
         elif nodeA.get(attrA) is None:
             attributes[attr] = {'value': nodeB[attrB]}
