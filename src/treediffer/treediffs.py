@@ -143,7 +143,7 @@ def diff_node(nodeA, nodeB,
 
 def diff_attributes(nodeA, nodeB,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
-    assesment_items_key='assesment_items', setlike_attrs=['tags', 'files']):
+    assesment_items_key='assesment_items', setlike_attrs=['tags']):
     """
     Compute the diff between the attrributes of `nodeA` and `nodeB`.
     Returns a dict { added=[], deleted=[], modifeid=[], attributes={} }
@@ -168,7 +168,8 @@ def diff_attributes(nodeA, nodeB,
 
     # 1. Regular attributes
     for attr in attrs:
-        if attr in exclude_attrs or attr in setlike_attrs or attr == assesment_items_key:
+        if attr in exclude_attrs or attr in setlike_attrs \
+            or attr == assesment_items_key or attr == 'files':
             continue
 
         attrA = mapA.get(attr, attr)
@@ -220,8 +221,24 @@ def diff_attributes(nodeA, nodeB,
                 }
                 modified.append(attr)
 
-    # 3. Assesment items
-    if assesment_items_key in nodeA and assesment_items_key in nodeB:
+    # 3. Files
+    if 'files' not in exclude_attrs and 'files' in nodeA and 'files' in nodeB:
+        files_diff = diff_files(nodeA['files'], nodeB['files'])
+        if files_diff['added'] or files_diff['deleted']:
+            modified.append('files')
+            attributes['files'] = {
+                'old_value': nodeA['files'],
+                'value': nodeB['files'],
+                'added': files_diff['added'],
+                'deleted': files_diff['deleted'],
+            }
+        else:
+            attributes['files'] = {
+                'value': nodeB['files'],
+            }
+
+    # 4. Assesment items
+    if assesment_items_key and assesment_items_key in nodeA and assesment_items_key in nodeB:
         node_id_keyA = mapA.get('node_id', 'node_id')
         node_idA = nodeA[node_id_keyA]
         listA = nodeA[assesment_items_key]
@@ -230,22 +247,46 @@ def diff_attributes(nodeA, nodeB,
         listB = nodeB[assesment_items_key]
         ais_diff = diff_assesment_items(node_idA, listA, node_idB, listB,
                                         mapA=mapA, mapB=mapB, exclude_attrs=exclude_attrs)
-        if diff_atts['added'] or diff_atts['deleted'] or diff_atts['moved'] or diff_atts['modified']:
+        if ais_diff['added'] or ais_diff['deleted'] or ais_diff['moved'] or ais_diff['modified']:
             modified.append(assesment_items_key)
             attributes[assesment_items_key] = {
                 'old_value': nodeA[assesment_items_key],
                 'value': nodeB[assesment_items_key],
-                'added': diff_atts['added'],
-                'deleted': diff_atts['deleted'],
-                'moved': diff_atts['moved'],
-                'modified': diff_atts['modified'],
+                'added': ais_diff['added'],
+                'deleted': ais_diff['deleted'],
+                'moved': ais_diff['moved'],
+                'modified': ais_diff['modified'],
             }
+        else:
+            attributes[assesment_items_key] = {
+                'value': nodeB[assesment_items_key],
+            }
+    # return attrs_diff
     return {
         'added': added,
         'deleted': deleted,
         'modified': modified,
         'attributes': attributes,
     }
+
+
+def diff_files(listA, listB):
+    """
+    Compute the diff of two lists for files, treating them as set-like.
+    """
+    added = []
+    deleted = []
+    for fileA in listA:
+        if fileA not in listB:
+            deleted.append(fileA)
+    for fileB in listB:
+        if fileB not in listA:
+            added.append(fileB)
+    return {
+        'added': added,
+        'deleted': deleted,
+    }
+
 
 def diff_assesment_items(parent_idA, listA, parent_idB, listB, exclude_attrs=[], mapA={}, mapB={}):
     added = []
@@ -275,6 +316,13 @@ def compare_subtrees(nodeA, nodeB, attrs=['title'], mapA={}, mapB={}):
     return diff
 
 
+def detect_moves(nodes_added, nodes_deleted):
+    """
+    Look for nodes with the same `content_id` that appear in both lists, and
+    interpret those nodes as having moved.
+    Returns `nodes_moved` (list).
+    """
+    pass
 
 
 

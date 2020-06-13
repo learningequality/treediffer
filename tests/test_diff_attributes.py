@@ -45,6 +45,15 @@ def test_modify_title(sample_node):
 # SET-LIKE NODE ATTRIBUTES
 ################################################################################
 
+def test_tags_noop(sample_node_with_tags):
+    modified_node = copy.deepcopy(sample_node_with_tags)
+
+    attrs_diff = diff_attributes(sample_node_with_tags, modified_node)
+
+    modified = attrs_diff['modified']
+    assert len(modified) == 0
+
+
 def test_add_and_rm_tags(sample_node_with_tags, sample_tags_add_and_rm):
     modified_node = copy.deepcopy(sample_node_with_tags)
     modified_node['tags'] = sample_tags_add_and_rm
@@ -77,3 +86,53 @@ def test_tags_reordered(sample_node_with_tags, sample_tags_reordered):
     attributes = attrs_diff['attributes']
     val_dict = attributes['tags']
     assert val_dict['value'] == modified_node['tags']
+
+
+
+# FILES
+################################################################################
+
+def test_files_noop(sample_node_with_files):
+    modified_node = copy.deepcopy(sample_node_with_files)
+
+    attrs_diff = diff_attributes(sample_node_with_files, modified_node)
+
+    modified = attrs_diff['modified']
+    assert len(modified) == 0
+
+
+def test_add_and_rm_files(sample_node_with_files, sample_files_add_and_rm):
+    filesA = sample_node_with_files['files']
+    modified_node = copy.deepcopy(sample_node_with_files)
+    modified_node['files'] = sample_files_add_and_rm
+    filesB = sample_files_add_and_rm
+
+    attrs_diff = diff_attributes(sample_node_with_files, modified_node)
+    pprint.pprint(attrs_diff)
+
+    modified = attrs_diff['modified']
+    assert len(modified) == 1
+    assert 'files' in modified
+
+    attributes = attrs_diff['attributes']
+    files_diff = attributes['files']
+    assert files_diff['old_value'] == sample_node_with_files['files']
+    assert files_diff['value'] == modified_node['files']
+    assert files_diff['added'] == [filesB[1], filesB[3], filesB[4]]
+    assert files_diff['deleted'] == [filesA[1]]
+
+
+def test_files_reordered(sample_node_with_files, sample_files_reordered):
+    modified_node = copy.deepcopy(sample_node_with_files)
+    modified_node['files'] = sample_files_reordered
+
+    attrs_diff = diff_attributes(sample_node_with_files, modified_node)
+    # pprint.pprint(attrs_diff)
+
+    modified = attrs_diff['modified']
+    assert len(modified) == 0
+
+    attributes = attrs_diff['attributes']
+    val_dict = attributes['files']
+    assert val_dict['value'] == modified_node['files']
+

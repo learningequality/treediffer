@@ -97,21 +97,133 @@ def sample_node():
 
 @pytest.fixture
 def sample_tags():
-    return ['tag1', 'tag2', 'tag3']
+    return ["tag1", "tag2", "tag3"]
 
 @pytest.fixture
 def sample_tags_add_and_rm():
-    return ['tag1','tag4', 'tag3', 'tag5', 'tag6']
+    return ["tag1","tag4", "tag3", "tag5", "tag6"]
 
 @pytest.fixture
 def sample_tags_reordered():
-    return ['tag1','tag3', 'tag2']
+    return ["tag1","tag3", "tag2"]
 
 @pytest.fixture
 def sample_node_with_tags(sample_node, sample_tags):
     node = sample_node
-    node['tags'] = sample_tags
+    node["tags"] = sample_tags
     return node
+
+
+@pytest.fixture
+def sample_files():
+    return [
+        {
+            "filename": "md5(file1.content).ext",
+            "size": 1001,
+            "preset": "file1_preset",
+            "original_filename": "orginal_name_of_file1.ext",
+            "language": "en",
+            "source_url": "http://src.org/file1.ext",
+        },
+        {
+            "filename": "md5(file2.content).ext",
+            "size": 1002,
+            "preset": "file2_preset",
+            "original_filename": "orginal_name_of_file2.ext",
+            "language": "en",
+            "source_url": "http://src.org/file2.ext",
+        },
+        {
+            "filename": "md5(file3.content).ext",
+            "size": 1003,
+            "preset": "file3_preset",
+            "original_filename": "orginal_name_of_file3.ext",
+            "language": "en",
+            "source_url": "http://src.org/file3.ext",
+        },
+    ]
+
+@pytest.fixture
+def sample_files_add_and_rm():
+    return [
+        {
+            "filename": "md5(file1.content).ext",
+            "size": 1001,
+            "preset": "file1_preset",
+            "original_filename": "orginal_name_of_file1.ext",
+            "language": "en",
+            "source_url": "http://src.org/file1.ext",
+        },
+        {
+            "filename": "md5(file4.content).ext",
+            "size": 1004,
+            "preset": "file4_preset",
+            "original_filename": "orginal_name_of_file4.ext",
+            "language": "en",
+            "source_url": "http://src.org/file4.ext",
+        },
+        {
+            "filename": "md5(file3.content).ext",
+            "size": 1003,
+            "preset": "file3_preset",
+            "original_filename": "orginal_name_of_file3.ext",
+            "language": "en",
+            "source_url": "http://src.org/file3.ext",
+        },
+        {
+            "filename": "md5(file5.content).ext",
+            "size": 1005,
+            "preset": "file5_preset",
+            "original_filename": "orginal_name_of_file5.ext",
+            "language": "en",
+            "source_url": "http://src.org/file4.ext",
+        },
+        {
+            "filename": "md5(file6.content).ext",
+            "size": 1006,
+            "preset": "file6_preset",
+            "original_filename": "orginal_name_of_file6.ext",
+            "language": "en",
+            "source_url": "http://src.org/file6.ext",
+        },
+    ]
+
+@pytest.fixture
+def sample_files_reordered():
+    return [
+        {
+            "filename": "md5(file1.content).ext",
+            "size": 1001,
+            "preset": "file1_preset",
+            "original_filename": "orginal_name_of_file1.ext",
+            "language": "en",
+            "source_url": "http://src.org/file1.ext",
+        },
+        {
+            "filename": "md5(file3.content).ext",
+            "size": 1003,
+            "preset": "file3_preset",
+            "original_filename": "orginal_name_of_file3.ext",
+            "language": "en",
+            "source_url": "http://src.org/file3.ext",
+        },
+        {
+            "filename": "md5(file2.content).ext",
+            "size": 1002,
+            "preset": "file2_preset",
+            "original_filename": "orginal_name_of_file2.ext",
+            "language": "en",
+            "source_url": "http://src.org/file2.ext",
+        },
+    ]
+
+@pytest.fixture
+def sample_node_with_files(sample_node, sample_files):
+    node = sample_node
+    node["files"] = sample_files
+    return node
+
+
 
 
 

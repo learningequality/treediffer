@@ -3,6 +3,8 @@
 # RICECOOKER TREES
 ################################################################################
 
+assesment_items_key = 'questions'
+
 ricecooker_map = {
     "license_id": "license.license_id",
     "license_description": "license.description",
@@ -14,13 +16,16 @@ ricecooker_map = {
 ################################################################################
 
 
+assesment_items_key = 'questions'
+
 ricecooker_studio_map = {
-    "assessment_items": "questions",
 }
 
 
 # STUDIO TREES
 ################################################################################
+
+assesment_items_key = 'assesment_items'
 
 STUDIO_NODE_ATTRIBUES = [
     "title", "description", "license_id", "license_description", "language_id", "copyright_holder",
@@ -37,6 +42,13 @@ STUDIO_FILE_ATTRIBUES = ["checksum", "preset_id", "language_id", "source_url", "
 
 # KOLIBRI TREES
 ################################################################################
+
+assesment_items_key = None
+
+setlike_attrs = [
+    "tags",
+    "assessmentmetadata",  # assesment items are actually list-like, but handle as a set for simplicity
+]
 
 kolibri_map = {
     "license_id": "license_name",
