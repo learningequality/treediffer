@@ -124,21 +124,11 @@ def diff_children(parent_idA, childrenA, parent_idB, childrenB,
         )
         nodes_added.append(node)
 
-
-    diff = dict(
-        nodes_deleted=nodes_deleted,
-        nodes_added=nodes_added,
-        nodes_modified=nodes_modified,
-    )
-
-    # for node_pair in node_pairs:
-    #     childA, childB = children_pair
-    #     children_attr_diff = compare_node_attrs(childA, childB, attrs=attrs, mapA=mapA, mapB=mapB)
-    #     diff.extend(children_attr_diff)
-    #     if recursive:
-    #         children_diff = compare_trees_children(childA, childB, attrs=attrs, mapA=mapA, mapB=mapB, recursive=recursive)
-    #         diff.extend(children_diff)
-    return diff
+    return {
+        'nodes_deleted': nodes_deleted,
+        'nodes_added': nodes_added,
+        'nodes_modified': nodes_modified,
+    }
 
 
 def diff_node(nodeA, nodeB,
@@ -280,6 +270,7 @@ def diff_attributes(nodeA, nodeB,
             attributes[assesment_items_key] = {
                 'value': nodeB[assesment_items_key],
             }
+
     # return attrs_diff
     return {
         'added': added,
