@@ -3,126 +3,44 @@ import copy
 
 from .diffutils import contains, findby
 
-def compare_node_attrs(nodeA, nodeB, attrs):
-    diff = []
-    for attr in attrs:
-        attrA = nodeA.get(attr, None)
-        attrB = nodeA.get(attr, None)
-        if attrA != attrB:
-            diff.append(attr)
-    return diff
+# EXTERNAL API
+################################################################################
 
-
-def diff_children(parent_idA, childrenA, parent_idB, childrenB,
-    attrs=None, exclude_attrs=[], mapA={}, mapB={},
-    assessment_items_key='assessment_items', setlike_attrs=['tags']):
+def treediff(treeA, treeB, preset=None, format="simplified",
+             attrs=None, exclude_attrs=[], mapA={}, mapB={},
+             assessment_items_key='assessment_items', setlike_attrs=['tags']):
     """
-    Compute the diff between the nodes in `childrenA` and the nodes in `childrenB`.
-    Args:
-      - attrs (list(str)): what attributes to check in comparison
-      - mapA: map of diff attribues to childrenA node attributes
-      - mapB: map of diff attribues to childrenB node attributes
-      - recursive (bool): check just one level of children, or all levels of children?
+    Compute the diff between `treeA` (old tree) and `treeB` (new tree).
     """
-    # 1A. prepropocess childrenA nodes
-    itemsA = []
-    node_idsA = set()
-    for i, nodeA in enumerate(childrenA):
-        node_id_keyA = mapA.get('node_id', 'node_id')
-        content_id_keyA = mapA.get('content_id', 'content_id')
-        node_idA, content_idA = nodeA[node_id_keyA], nodeA[content_id_keyA]
-        sort_order_keyA = mapA.get('sort_order', 'sort_order')
-        sort_orderA = nodeA.get(sort_order_keyA, None)
-        if sort_orderA is None:
-            sort_orderA = i + 1  # 1-based indexitng
-        itemA = dict(
-            parent_id=parent_idA,
-            node_id=node_idA,
-            sort_order=sort_orderA,
-            content_id=content_idA,
-            node=nodeA,
-        )
-        itemsA.append(itemA)
-        node_idsA.add(node_idA)
+    # 0. load diff preset
+    if preset is not None:
+        pass
 
-    # 1B. prepropocess childrenB nodes
-    itemsB = []
-    node_idsB = set()
-    for j, nodeB in enumerate(childrenB):
-        node_id_keyB = mapB.get('node_id', 'node_id')
-        content_id_keyB = mapB.get('content_id', 'content_id')
-        node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
-        sort_order_keyB = mapB.get('sort_order', 'sort_order')
-        sort_orderB = nodeB.get(sort_order_keyB, None)
-        if sort_orderB is None:
-            sort_orderB = j + 1  # 1-based indexitng
-        itemB = dict(
-            parent_id=parent_idB,
-            node_id=node_idB,
-            sort_order=sort_orderB,
-            content_id=content_idB,
-            node=nodeB,
-        )
-        itemsB.append(itemB)
-        node_idsB.add(node_idB)
-
-    # TODO?? do we need to flatten lists 2 and 3? (in case added nodes have children)
-
-
-    # 2. nodes deleted
-    nodes_deleted = []
-    deleted_items = [itA for itA in itemsA if not contains(itemsB, itA, by=('node_id', 'sort_order'))]
-    for item in deleted_items:
-        node = dict(
-            old_node_id=item['node_id'],
-            old_parent_id=item['parent_id'],
-            old_sort_order=item['sort_order'],
-            content_id=item['content_id'],
-            attributes=dict(
-                (attr, {'value': val}) for attr, val in item['node'].items()
-            )
-        )
-        nodes_deleted.append(node)
-
-    # 3. nodes added
-    nodes_added = []
-    added_items = [itB for itB in itemsB if not contains(itemsA, itB, by=('node_id', 'sort_order'))]
-    for item in added_items:
-        node = dict(
-            node_id=item['node_id'],
-            parent_id=item['parent_id'],
-            sort_order=item['sort_order'],
-            content_id=item['content_id'],
-            attributes=dict(
-                (attr, {'value': val}) for attr, val in item['node'].items()
-            )
-        )
-        nodes_added.append(node)
-
-    # 4. recursely diff common nodes
-    nodes_modified = []
-    common_item_tuples = []
-    for itA in itemsA:
-        itB = findby(itemsB, itA, by=('node_id'))
-        if itB:
-            common_item_tuples.append((itA, itB))
-    for itA, itB in common_item_tuples:
-        diff = diff_subtree('pidA', itA['node'], 'pidB', itB['node'],  # FIX ME!!!!!!!!!
+    # 1. compute the tree diff
+    # special handling of tree root nodes??? (might not have the same IDs)
+    raw_diff = diff_subtree(None, treeA, None, treeB,
                             attrs=attrs, exclude_attrs=exclude_attrs,
                             mapA=mapA, mapB=mapB,
                             assessment_items_key=assessment_items_key,
                             setlike_attrs=setlike_attrs)
-        nodes_deleted.extend(diff['nodes_deleted'])
-        nodes_added.extend(diff['nodes_added'])
-        nodes_modified.extend(diff['nodes_modified'])
 
-    # return combined info (note node moves will be detected at a later stage)
-    return {
-        'nodes_deleted': nodes_deleted,
-        'nodes_added': nodes_added,
-        'nodes_modified': nodes_modified,
-    }
+    # 2. detect node moves
+    nodes_moved = detect_moves(raw_diff['nodes_deleted'], raw_diff['nodes_added'])
+    raw_diff['nodes_moved'] = nodes_moved
 
+    if format == "raw":
+        return raw_diff
+
+    # # 3. simplify (remove nodes moved from nodes added/deleted lists)
+    # simplified_diff = simplify_diff(raw_diff)
+    # 
+    # # 4. restructure (un-flatten)
+    # simplified_diff = restructure_diff(simplified_diff)
+
+
+
+# PHASE 1
+################################################################################
 
 def diff_subtree(parent_idA, nodeA, parent_idB, nodeB,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
@@ -162,16 +80,16 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB,
         nodes_modified.append(node)
 
     nodes_deleted, nodes_added = [], []
-    # if 'children' in nodeA and 'children' in nodeB:
-    #     children_diff = diff_children(node_idA, nodeA['children'],
-    #                                   node_idB, nodeB['children'],
-    #                                   attrs=attrs, exclude_attrs=exclude_attrs,
-    #                                   mapA=mapA, mapB=mapB,
-    #                                   assessment_items_key=assessment_items_key,
-    #                                   setlike_attrs=setlike_attrs)
-    #     nodes_added.extend(children_diff['nodes_added'])
-    #     nodes_deleted.extend(children_diff['nodes_deleted'])
-    #     nodes_modified.extend(children_diff['nodes_modified'])
+    if 'children' in nodeA and 'children' in nodeB:
+        children_diff = diff_children(node_idA, nodeA['children'],
+                                      node_idB, nodeB['children'],
+                                      attrs=attrs, exclude_attrs=exclude_attrs,
+                                      mapA=mapA, mapB=mapB,
+                                      assessment_items_key=assessment_items_key,
+                                      setlike_attrs=setlike_attrs)
+        nodes_added.extend(children_diff['nodes_added'])
+        nodes_deleted.extend(children_diff['nodes_deleted'])
+        nodes_modified.extend(children_diff['nodes_modified'])
 
     return {
         'nodes_deleted': nodes_deleted,
@@ -181,12 +99,11 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB,
 
 
 
-
 def diff_attributes(nodeA, nodeB,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
     assessment_items_key='assessment_items', setlike_attrs=['tags']):
     """
-    Compute the diff between the attrributes of `nodeA` and `nodeB`.
+    Compute the diff between the attributes of `nodeA` and `nodeB`.
     Returns a dict { added=[], deleted=[], modifeid=[], attributes={} }
     """
     attributes = {}
@@ -420,33 +337,132 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
     }
 
 
-def detect_moves(nodes_added, nodes_deleted):
+
+def diff_children(parent_idA, childrenA, parent_idB, childrenB,
+    attrs=None, exclude_attrs=[], mapA={}, mapB={},
+    assessment_items_key='assessment_items', setlike_attrs=['tags']):
+    """
+    Compute the diff between the nodes in `childrenA` and the nodes in `childrenB`.
+    Args:
+      - attrs (list(str)): what attributes to check in comparison
+      - mapA: map of diff attribues to childrenA node attributes
+      - mapB: map of diff attribues to childrenB node attributes
+    """
+    # 1A. prepropocess childrenA nodes
+    itemsA = []
+    node_idsA = set()
+    for i, nodeA in enumerate(childrenA):
+        node_id_keyA = mapA.get('node_id', 'node_id')
+        content_id_keyA = mapA.get('content_id', 'content_id')
+        node_idA, content_idA = nodeA[node_id_keyA], nodeA[content_id_keyA]
+        sort_order_keyA = mapA.get('sort_order', 'sort_order')
+        sort_orderA = nodeA.get(sort_order_keyA, None)
+        if sort_orderA is None:
+            sort_orderA = i + 1  # 1-based indexitng
+        itemA = dict(
+            parent_id=parent_idA,
+            node_id=node_idA,
+            sort_order=sort_orderA,
+            content_id=content_idA,
+            node=nodeA,
+        )
+        itemsA.append(itemA)
+        node_idsA.add(node_idA)
+
+    # 1B. prepropocess childrenB nodes
+    itemsB = []
+    node_idsB = set()
+    for j, nodeB in enumerate(childrenB):
+        node_id_keyB = mapB.get('node_id', 'node_id')
+        content_id_keyB = mapB.get('content_id', 'content_id')
+        node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
+        sort_order_keyB = mapB.get('sort_order', 'sort_order')
+        sort_orderB = nodeB.get(sort_order_keyB, None)
+        if sort_orderB is None:
+            sort_orderB = j + 1  # 1-based indexitng
+        itemB = dict(
+            parent_id=parent_idB,
+            node_id=node_idB,
+            sort_order=sort_orderB,
+            content_id=content_idB,
+            node=nodeB,
+        )
+        itemsB.append(itemB)
+        node_idsB.add(node_idB)
+
+    # 2. nodes deleted
+    nodes_deleted = []
+    deleted_items = [itA for itA in itemsA if not contains(itemsB, itA, by=('node_id', 'sort_order'))]
+    for item in deleted_items:
+        node = dict(
+            old_node_id=item['node_id'],
+            old_parent_id=item['parent_id'],
+            old_sort_order=item['sort_order'],
+            content_id=item['content_id'],
+            attributes=dict(
+                (attr, {'value': val}) for attr, val in item['node'].items()
+            )
+        )
+        nodes_deleted.append(node)
+
+    # 3. nodes added
+    nodes_added = []
+    added_items = [itB for itB in itemsB if not contains(itemsA, itB, by=('node_id', 'sort_order'))]
+    for item in added_items:
+        node = dict(
+            node_id=item['node_id'],
+            parent_id=item['parent_id'],
+            sort_order=item['sort_order'],
+            content_id=item['content_id'],
+            attributes=dict(
+                (attr, {'value': val}) for attr, val in item['node'].items()
+            )
+        )
+        nodes_added.append(node)
+
+    # 4. recursely diff common nodes
+    nodes_modified = []
+    common_item_tuples = []
+    for itA in itemsA:
+        itB = findby(itemsB, itA, by=('node_id'))
+        if itB:
+            common_item_tuples.append((itA, itB))
+    for itA, itB in common_item_tuples:
+        diff = diff_subtree(parent_idA, itA['node'], parent_idB, itB['node'],
+                            attrs=attrs, exclude_attrs=exclude_attrs,
+                            mapA=mapA, mapB=mapB,
+                            assessment_items_key=assessment_items_key,
+                            setlike_attrs=setlike_attrs)
+        nodes_deleted.extend(diff['nodes_deleted'])
+        nodes_added.extend(diff['nodes_added'])
+        nodes_modified.extend(diff['nodes_modified'])
+
+    # return combined info (note: node moves will be detected at a later stage)
+    return {
+        'nodes_deleted': nodes_deleted,
+        'nodes_added': nodes_added,
+        'nodes_modified': nodes_modified,
+    }
+
+
+# PHASE 2
+################################################################################
+
+def detect_moves(nodes_deleted, nodes_added):
     """
     Look for nodes with the same `content_id` that appear in both lists, and
     interpret those nodes as having moved.
     Returns `nodes_moved` (list).
     """
-    pass
+    # flatten lists (in case added nodes have children)
+    #
+    return []
 
 
-
-# def treediff(oldtree, newtree, attrs=None, exclude_attrs=[], mapA={}, mapB={},
-#              assessment_items_key='assessment_items', setlike_attrs=['tags']):
-#     """
-#     Compute the differences between `newtree` and `oldtree`.
-#     """
-#     # 1. compute the tree diff
-# 
-#     # 2. detect node moves
-# 
-#     # 3. summarize?
-#     diff_dict = {
-#         "nodes_deleted": {},
-#         "nodes_added": {},
-#         "nodes_moved": {},
-#         "nodes_modified": {},
-#     }
+# PHASE 3
+################################################################################
 
 
-
+# PHASE 4
+################################################################################
 

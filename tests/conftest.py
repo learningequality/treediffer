@@ -344,7 +344,7 @@ def get_topic_with_children(prefix, sample_children):
     """
     topic = {
         "title": "Topic " + prefix,
-        "source_id": prefix,
+        "node_id": prefix,
         "content_id": prefix + "cid",
         "description": "The description of the " + prefix + " topic",
         "language": "en",
@@ -387,7 +387,7 @@ def sample_tree(sample_children):
     # T2
     t2 = {
         "title": "Topic T2",
-        "source_id": "T2",
+        "node_id": "T2",
         "content_id": "T2cid",
         "description": "The description of the T2 topic",
         "language": "en",
@@ -402,7 +402,7 @@ def sample_tree(sample_children):
     # T3
     t3 = {
         "title": "Topic T3",
-        "source_id": "T3",
+        "node_id": "T3",
         "content_id": "T3cid",
         "description": "The description of the T3 topic",
         "language": "en",
@@ -410,7 +410,7 @@ def sample_tree(sample_children):
     }
     t31 = {
         "title": "Topic T31",
-        "source_id": "T31",
+        "node_id": "T31",
         "content_id": "T31cid",
         "description": "The description of the T31 topic",
         "language": "en",
@@ -422,4 +422,3 @@ def sample_tree(sample_children):
     tree['children'].append(t3)
 
     return tree
-

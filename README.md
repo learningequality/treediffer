@@ -43,7 +43,4 @@ https://treediffer.readthedocs.io/
 TODOs
 -----
  -[ ] Finish basic functionality
- -[ ] Consider adding `copied` field (a special type of added, where a node with
-      the same content_id in the old tree exists)
- -[ ] Assumes `content_id` available on topic nodes (may need to relax in future)
-
+ 

@@ -43,20 +43,3 @@ The T3 tree format has several uses:
 
 
 
-
-## Sources of info about "what changed"
-
-A. Detailed diff (added/removed/changed/moved):
- - A1: changes between main tree and staged tree
-   No new data requirements, just Ivan needs to get off his ass and finish the detailed_node_diff PR.
- - A2: changes between published versions (e.g. v3 and and v5 diff)
-   Requires: storing full tree data on each publish to some non-overwritable format e.g. in GCP bucket:/content/channeltrees/{{channel_id}}/v3.json
-
-B. Partial diff changes (created + modified):
- - show list of recently modified nodes
-   Obstacle: can't really show diff of what changed since don't have the old node data, but can still be useful
-
-C. Changes to result list of a saved search
- - show list of new matches or removed search matches
-   Requires: storing /content/searchresults/{{saved_seach_id}}/{{datetime}}/results.json
-   Requires: redoing search query every time list of saved searches UI is displayed in order to compute bell notification

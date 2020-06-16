@@ -1,10 +1,25 @@
+import copy
 import pprint
 
-# from treediffer.treediffs import treediff
+# SUT
+from treediffer.treediffs import treediff
 
 DEBUG_MODE = True
 
 
-# def test_basic_treediff():
-#     diff_dict = treediff({},{})
-#     assert diff_dict is None
+
+# HIGH LEVEL API
+################################################################################
+
+def test_treediff_noop(sample_tree):
+    assert len(sample_tree['children']) == 3
+    unchanged_tree = copy.deepcopy(sample_tree)
+
+    raw_diff = treediff(sample_tree, unchanged_tree, format="raw")
+
+    diff_keys = ['nodes_deleted', 'nodes_added', 'nodes_modified', 'nodes_moved']
+    for diff_key in diff_keys:
+        assert raw_diff[diff_key] == []
+
+    print('\n')
+    pprint.pprint(raw_diff, width=120)
