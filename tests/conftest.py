@@ -333,16 +333,93 @@ def sample_node_with_assessment_items(sample_node, sample_assessment_items):
 
 
 
+
 # TREE FIXTURES
 ################################################################################
 
+def get_topic_with_children(prefix, sample_children):
+    """
+    Reuse the three-nodes sequence form sample_children to create a topic node.
+    Modify `node_id`s and `content_id`s to make sure nodes are different.
+    """
+    topic = {
+        "title": "Topic " + prefix,
+        "source_id": prefix,
+        "content_id": prefix + "cid",
+        "description": "The description of the " + prefix + " topic",
+        "language": "en",
+        "children": [],
+    }
+    children = copy.deepcopy(sample_children)
+    for child in children:
+        child['node_id'] = prefix + child['node_id']
+        child['content_id'] = prefix + child['content_id']
+        child['title'] = child['title'] + ' (' + prefix + ')'
+    topic['children'] = children
+    return topic
+
 @pytest.fixture
-def basic_tree(sample_children):
-    return {
-        "title": "Basic tree",
-        "source_id": "basic-tree",
+def sample_tree(sample_children):
+    """
+    - T1 (three nodes template)
+    - T2:
+      - T21 (three nodes template)
+      - T22 (three nodes template)
+      - T23 (three nodes template)
+    - T3
+      - T31
+        - T311 (three nodes template)
+    """
+    tree = {
+        "title": "Sample tree",
+        "node_id": "0000000", # TODO: ass special code for handling root ids == channel id
+        "content_id": "c0000000", # TODO: ass special code for handling root ids == channel id
+        "source_id": "sample-tree",
         "description": "A simple tree we can modify for all kinds of tests",
         "language": "en",
-        "children": sample_children(),
+        "children": []
     }
+
+    # T1
+    t1 = get_topic_with_children('T1', sample_children)
+    tree['children'].append(t1)
+
+    # T2
+    t2 = {
+        "title": "Topic T2",
+        "source_id": "T2",
+        "content_id": "T2cid",
+        "description": "The description of the T2 topic",
+        "language": "en",
+        "children": [],
+    }
+    t21 = get_topic_with_children('T21', sample_children)
+    t22 = get_topic_with_children('T22', sample_children)
+    t23 = get_topic_with_children('T23', sample_children)
+    t2['children'] = [t21, t22, t23]
+    tree['children'].append(t2)
+
+    # T3
+    t3 = {
+        "title": "Topic T3",
+        "source_id": "T3",
+        "content_id": "T3cid",
+        "description": "The description of the T3 topic",
+        "language": "en",
+        "children": [],
+    }
+    t31 = {
+        "title": "Topic T31",
+        "source_id": "T31",
+        "content_id": "T31cid",
+        "description": "The description of the T31 topic",
+        "language": "en",
+        "children": [],
+    }
+    t311 = get_topic_with_children('T311', sample_children)
+    t31['children'] = [t311]
+    t3['children'] = [t31]
+    tree['children'].append(t3)
+
+    return tree
 

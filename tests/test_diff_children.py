@@ -73,6 +73,7 @@ def test_children_with_modifications(sample_children, sample_children_with_modif
     assert len(sample_children_with_modifications) == 3
 
     diff = diff_children('p1', sample_children, 'p2', sample_children_with_modifications)
+    # pprint.pprint(diff)
 
     assert len(diff['nodes_added']) == 0
     assert len(diff['nodes_deleted']) == 0
