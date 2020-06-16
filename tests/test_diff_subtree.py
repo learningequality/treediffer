@@ -5,7 +5,6 @@ import pprint
 from treediffer.treediffs import diff_subtree
 
 
-
 DEBUG_MODE = True
 
 

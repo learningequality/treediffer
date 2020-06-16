@@ -52,17 +52,12 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB,
     """
     # Get nodeA info
     node_id_keyA = mapA.get('node_id', 'node_id')
-    content_id_keyA = mapA.get('content_id', 'content_id')
-    node_idA, content_idA = nodeA[node_id_keyA], nodeA[content_id_keyA]
-    sort_order_keyA = mapA.get('sort_order', 'sort_order')
-    sort_orderA = nodeA.get(sort_order_keyA, None)
+    node_idA = nodeA[node_id_keyA]
 
     # Get nodeB info
     node_id_keyB = mapB.get('node_id', 'node_id')
     content_id_keyB = mapB.get('content_id', 'content_id')
     node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
-    sort_order_keyB = mapB.get('sort_order', 'sort_order')
-    sort_orderB = nodeB.get(sort_order_keyB, None)
 
     nodes_modified = []
     attrs_diff = diff_attributes(nodeA, nodeB,
@@ -196,11 +191,7 @@ def diff_attributes(nodeA, nodeB,
 
     # 4. assessment items
     if assessment_items_key and assessment_items_key in nodeA and assessment_items_key in nodeB:
-        node_id_keyA = mapA.get('node_id', 'node_id')
-        node_idA = nodeA[node_id_keyA]
         listA = nodeA[assessment_items_key]
-        node_id_keyB = mapB.get('node_id', 'node_id')
-        node_idB = nodeB[node_id_keyB]
         listB = nodeB[assessment_items_key]
         ais_diff = diff_assessment_items(listA, listB, mapA=mapA, mapB=mapB, exclude_attrs=exclude_attrs)
         if ais_diff['added'] or ais_diff['deleted'] or ais_diff['moved'] or ais_diff['modified']:
