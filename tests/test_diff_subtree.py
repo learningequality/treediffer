@@ -42,7 +42,7 @@ def test_diff_subtree_removal(sample_tree, sample_tree_with_removals):
     # pprint.pprint(diff, width=120)
 
     nodes_deleted = diff['nodes_deleted']
-    assert len(nodes_deleted) == 1
+    assert len(nodes_deleted) == 6
 
     nodes_added = diff['nodes_added']
     assert len(nodes_added) == 0
@@ -57,7 +57,7 @@ def test_diff_subtree_removal(sample_tree, sample_tree_with_removals):
 def sample_tree_added(sample_tree, sample_children):
     modified_tree = copy.deepcopy(sample_tree)
     sample_children_copy = copy.deepcopy(sample_children)
-    t4 = get_topic_with_children('T4', sample_children_copy[0:2])
+    t4 = get_topic_with_children('T4', sample_children_copy)
     modified_tree['children'].extend([
         {
             "node_id": "nid4",
@@ -82,6 +82,6 @@ def test_diff_subtree_added(sample_tree, sample_tree_added):
     assert len(diff['nodes_modified']) == 0
 
     nodes_added = diff['nodes_added']
-    assert len(nodes_added) == 2
+    assert len(nodes_added) == 5
 
 

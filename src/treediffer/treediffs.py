@@ -1,7 +1,7 @@
 import pprint
 import copy
 
-from .diffutils import contains, findby
+from .diffutils import contains, findby, flatten_subtree
 
 # EXTERNAL API
 ################################################################################
@@ -251,7 +251,7 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
         sort_order_keyA = mapA.get('sort_order', 'sort_order')
         sort_orderA = aiA.get(sort_order_keyA, None)
         if sort_orderA is None:
-            sort_orderA = i + 1  # 1-based indexitng
+            sort_orderA = float(i + 1)  # 1-based indexitng
         itemA = dict(
             sort_order=sort_orderA,
             assessment_id=assessment_idA,
@@ -263,13 +263,13 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
     # 1B. prepropocess listB to extract sort_order and assessment_id
     itemsB = []
     assessment_idsB = set()
-    for i, aiB in enumerate(listB):
+    for j, aiB in enumerate(listB):
         assessment_id_keyB = mapB.get('assessment_id', 'assessment_id')
         assessment_idB = aiB[assessment_id_keyB]
         sort_order_keyB = mapB.get('sort_order', 'sort_order')
         sort_orderB = aiB.get(sort_order_keyB, None)
         if sort_orderB is None:
-            sort_orderB = i + 1  # 1-based indexitng
+            sort_orderB = float(j + 1)  # 1-based indexitng
         itemB = dict(
             sort_order=sort_orderB,
             assessment_id=assessment_idB,
@@ -349,7 +349,7 @@ def diff_children(parent_idA, childrenA, parent_idB, childrenB,
         sort_order_keyA = mapA.get('sort_order', 'sort_order')
         sort_orderA = nodeA.get(sort_order_keyA, None)
         if sort_orderA is None:
-            sort_orderA = i + 1  # 1-based indexitng
+            sort_orderA = float(i + 1)  # 1-based indexitng
         itemA = dict(
             parent_id=parent_idA,
             node_id=node_idA,
@@ -370,7 +370,7 @@ def diff_children(parent_idA, childrenA, parent_idB, childrenB,
         sort_order_keyB = mapB.get('sort_order', 'sort_order')
         sort_orderB = nodeB.get(sort_order_keyB, None)
         if sort_orderB is None:
-            sort_orderB = j + 1  # 1-based indexitng
+            sort_orderB = float(j + 1)  # 1-based indexitng
         itemB = dict(
             parent_id=parent_idB,
             node_id=node_idB,
@@ -385,31 +385,15 @@ def diff_children(parent_idA, childrenA, parent_idB, childrenB,
     nodes_deleted = []
     deleted_items = [itA for itA in itemsA if not contains(itemsB, itA, by=('node_id', 'sort_order'))]
     for item in deleted_items:
-        node = dict(
-            old_node_id=item['node_id'],
-            old_parent_id=item['parent_id'],
-            old_sort_order=item['sort_order'],
-            content_id=item['content_id'],
-            attributes=dict(
-                (attr, {'value': val}) for attr, val in item['node'].items()
-            )
-        )
-        nodes_deleted.append(node)
+        flatlist = flatten_subtree(parent_idA, item['sort_order'], item['node'], kind="deleted", map=mapA)
+        nodes_deleted.extend(flatlist)
 
     # 3. nodes added
     nodes_added = []
     added_items = [itB for itB in itemsB if not contains(itemsA, itB, by=('node_id', 'sort_order'))]
     for item in added_items:
-        node = dict(
-            node_id=item['node_id'],
-            parent_id=item['parent_id'],
-            sort_order=item['sort_order'],
-            content_id=item['content_id'],
-            attributes=dict(
-                (attr, {'value': val}) for attr, val in item['node'].items()
-            )
-        )
-        nodes_added.append(node)
+        flatlist = flatten_subtree(parent_idB, item['sort_order'], item['node'], kind="added", map=mapB)
+        nodes_added.extend(flatlist)
 
     # 4. recursely diff common nodes
     nodes_modified = []

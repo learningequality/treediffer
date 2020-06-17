@@ -77,6 +77,60 @@ def subtreefindallby(subtree, value, by="node_id"):
     return results
 
 
+# FLATTENING
+################################################################################
+
+def flatten_subtree(parent_id, sort_order, subtree, kind, map={}):
+    """
+    Recusively flatten the `subtree` of nodes and return the information flat diff.
+    The diff attributes depend on what `kind` of diff it is: `added` or `deleted`.
+    """
+    flatlist = []
+    node_id_key = map.get('node_id', 'node_id')
+    content_id_key = map.get('content_id', 'content_id')
+    sort_order_key = map.get('sort_order', 'sort_order')
+
+    if 'children' in subtree:
+        children = subtree.pop('children')
+    else:
+        children = []
+
+    # first add yourself
+    if kind == "deleted":
+        node = dict(
+            old_node_id=subtree[node_id_key],
+            old_parent_id=parent_id,
+            old_sort_order=sort_order,
+            content_id=subtree[content_id_key],
+            attributes=dict(
+                (attr, {'value': val}) for attr, val in subtree.items()
+            )
+        )
+        flatlist.append(node)
+    elif kind == "added":
+        node = dict(
+            node_id=subtree[node_id_key],
+            parent_id=parent_id,
+            sort_order=sort_order,
+            content_id=subtree[content_id_key],
+            attributes=dict(
+                (attr, {'value': val}) for attr, val in subtree.items()
+            )
+        )
+        flatlist.append(node)
+    else:
+        raise ValueError('Unexpected flatlist kind ' + str(kind) + ' found.')
+
+    # ... then add your children.
+    for i, child in enumerate(children):
+        sort_order = child.get(sort_order_key, None)
+        if sort_order is None:
+            sort_order = float(i + 1)  # 1-based indexitng
+        childflatlist = flatten_subtree(subtree[node_id_key], sort_order, child, kind=kind, map=map)
+        flatlist.extend(childflatlist)
+
+    return flatlist
+
 
 # ATTRIBUTE UTILS
 ################################################################################
