@@ -1,7 +1,9 @@
-Tree diffs
-==========
+Tree diff formats
+=================
 
 The functions in `treediffer` are used to find differences between two trees.
+The resulting diff contains both structural information about the nodes' position
+in the tree as well as the nodes' attributes.
 
 
 ### Example of node deleted
@@ -152,6 +154,7 @@ nodes_modified = [
                 "moved": [],
                 "modified": [],
             },
+        },
     },
     {},
     ...,
@@ -160,9 +163,7 @@ nodes_modified = [
 ```
 
 
-
 ## Node structural annotations
-
 
 |                	| `old_parent_id` 	| `parent_id` 	| `old_sort_order` 	| `sort_order` 	|
 |-------------------|:-----------------:|:-------------:|:-----------------:|:-------------:|
@@ -170,4 +171,114 @@ nodes_modified = [
 | `nodes_added`   	|               	| x         	|                	| x          	|
 | `nodes_moved`   	| x             	| x         	| x              	| x          	|
 | `nodes_modified` 	|               	|           	|                	|            	|
+
+
+
+## Flat diffs
+
+Suppose a topic node T1 is added which has two children N1 and N2. Depending on
+the use case for the diff, we want to represent this change in different ways.
+The `raw` and `simplified` diff formats correspond to flat lists, so this change
+will appear as three separate items in the `nodes_added` list:
+
+```python
+nodes_added = [
+    ...,
+    {
+        "parent_id": (node_id(parentT1)),
+        "node_id": (node_id(T1)),
+        "sort_order": (float),
+        "content_id": (content_id(T1)),
+        "attributes": {
+            "title": {"value": "T1"},
+            "description": {"value": "The description of the new topic node"},
+            "content_id": {"value": (str)},
+            "sort_order": {"value": (float)},
+            ... }
+    },
+    {
+        "parent_id": (node_id(T1)),
+        "node_id": (node_id(N1)),
+        "sort_order": 1.0,
+        "content_id": (content_id(N1)),
+        "attributes": {
+            "title": {"value": "N1"},
+            "description": {"value": "The description of the first new node"},
+            "content_id": {"value": (str)},
+            "sort_order": {"value": 1.0},
+            ... }
+    },
+    {
+        "parent_id": (node_id(T1)),
+        "node_id": (node_id(N2)),
+        "sort_order": 2.0,
+        "content_id": (content_id(N2)),
+        "attributes": {
+            "title": {"value": "N2"},
+            "description": {"value": "The description of the second new node"},
+            "content_id": {"value": (str)},
+            "sort_order": {"value": 2.0},
+            ... }
+    },
+    ...,
+]
+```
+This is appropriate for counting number of nodes added/deleted/moved/modified.
+
+
+## Restructured diffs
+
+In the `restructured` diff format we'll combine these additions into a single
+logical addition of the topic, and indicate the presence of the child notes as
+children to the top-level topic addition:
+
+```python
+nodes_added = [
+    ...,
+    {
+        "parent_id": (node_id(parentT1)),
+        "node_id": (node_id(T1)),
+        "sort_order": (float),
+        "content_id": (content_id(T1)),
+        "attributes": {
+            "title": {"value": "T1"},
+            "description": {"value": "The description of the new topic node"},
+            "content_id": {"value": (str)},
+            "sort_order": {"value": (float)},
+            # no children     # <<< Note: children treated outside of attributes
+            ... },
+        "children": [
+              {
+                  "parent_id": (node_id(T1)),
+                  "node_id": (node_id(N1)),
+                  "sort_order": 1.0,
+                  "content_id": (content_id(N1)),
+                  "attributes": {
+                      "title": {"value": "N1"},
+                      "description": {"value": "The description of the first new node"},
+                      "content_id": {"value": (str)},
+                      "sort_order": {"value": 1.0},
+                      ... }
+              },
+              {
+                  "parent_id": (node_id(T1)),
+                  "node_id": (node_id(N2)),
+                  "sort_order": 2.0,
+                  "content_id": (content_id(N2)),
+                  "attributes": {
+                      "title": {"value": "N2"},
+                      "description": {"value": "The description of the second new node"},
+                      "content_id": {"value": (str)},
+                      "sort_order": {"value": 2.0},
+                      ... }
+              },
+        ]
+    },
+    ...,
+]
+```
+
+This format would is better suited for displaying the changes in a UI in a compact
+logical manner to avoid overwhelming users with long lists.
+
 

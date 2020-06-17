@@ -122,7 +122,7 @@ def diff_attributes(nodeA, nodeB,
     # 1. Regular attributes
     for attr in attrs:
         if attr in exclude_attrs or attr in setlike_attrs \
-            or attr == assessment_items_key or attr == 'files':
+            or attr == assessment_items_key or attr == 'files' or attr == 'children':
             continue
 
         attrA = mapA.get(attr, attr)

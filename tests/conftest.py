@@ -337,7 +337,7 @@ def sample_node_with_assessment_items(sample_node, sample_assessment_items):
 # TREE FIXTURES
 ################################################################################
 
-def get_topic_with_children(prefix, sample_children):
+def get_topic_with_children(prefix, children):
     """
     Reuse the three-nodes sequence form sample_children to create a topic node.
     Modify `node_id`s and `content_id`s to make sure nodes are different.
@@ -345,18 +345,19 @@ def get_topic_with_children(prefix, sample_children):
     topic = {
         "title": "Topic " + prefix,
         "node_id": prefix,
-        "content_id": prefix + "cid",
+        "content_id": prefix + "_cid",
         "description": "The description of the " + prefix + " topic",
         "language": "en",
         "children": [],
     }
-    children = copy.deepcopy(sample_children)
-    for child in children:
-        child['node_id'] = prefix + child['node_id']
-        child['content_id'] = prefix + child['content_id']
+    children_copy = copy.deepcopy(children)
+    for child in children_copy:
+        child['node_id'] = prefix + '_' + child['node_id']
+        child['content_id'] = prefix + '_' + child['content_id']
         child['title'] = child['title'] + ' (' + prefix + ')'
-    topic['children'] = children
+    topic['children'] = children_copy
     return topic
+
 
 @pytest.fixture
 def sample_tree(sample_children):

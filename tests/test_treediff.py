@@ -20,6 +20,3 @@ def test_treediff_noop(sample_tree):
     diff_keys = ['nodes_deleted', 'nodes_added', 'nodes_modified', 'nodes_moved']
     for diff_key in diff_keys:
         assert raw_diff[diff_key] == []
-
-    print('\n')
-    pprint.pprint(raw_diff, width=120)
