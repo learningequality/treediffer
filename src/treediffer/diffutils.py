@@ -82,8 +82,8 @@ def subtreefindallby(subtree, value, by="node_id"):
 
 def flatten_subtree(parent_id, sort_order, subtree, kind, map={}):
     """
-    Recusively flatten the `subtree` of nodes and return the information flat diff.
-    The diff attributes depend on what `kind` of diff it is: `added` or `deleted`.
+    Recusively flatten the `subtree` of nodes and return the info a a flat list.
+    The diff format depends on what `kind` of diff it is: `added` or `deleted`.
     """
     flatlist = []
     node_id_key = map.get('node_id', 'node_id')
@@ -95,7 +95,7 @@ def flatten_subtree(parent_id, sort_order, subtree, kind, map={}):
     else:
         children = []
 
-    # first add yourself
+    # first add yourself...
     if kind == "deleted":
         node = dict(
             old_node_id=subtree[node_id_key],
@@ -130,6 +130,7 @@ def flatten_subtree(parent_id, sort_order, subtree, kind, map={}):
         flatlist.extend(childflatlist)
 
     return flatlist
+
 
 
 # ATTRIBUTE UTILS

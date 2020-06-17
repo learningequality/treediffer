@@ -1,5 +1,7 @@
-import pytest
 import copy
+import json
+import pytest
+
 
 # LIST-LIKE FIXTURES
 ################################################################################
@@ -423,3 +425,11 @@ def sample_tree(sample_children):
     tree['children'].append(t3)
 
     return tree
+
+
+@pytest.fixture
+def sample_ricecooker_tree():
+    with open('tests/fixtures/ricecooker/small_channel_tree.json') as jsonf:
+        tree = json.load(jsonf)
+    return tree
+    

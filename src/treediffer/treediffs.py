@@ -128,13 +128,13 @@ def diff_attributes(nodeA, nodeB,
         attrA = mapA.get(attr, attr)
         attrB = mapB.get(attr, attr)
 
-        if nodeA.get(attrA) is None and nodeB.get(attrB) is None:
+        if attrA not in nodeA and attrB not in nodeB:
             print("WARNING requested diff for attr " + attr + " that don't exist")
             continue
-        elif nodeA.get(attrA) is None:
+        elif attrA not in nodeA:
             attributes[attr] = {'value': nodeB[attrB]}
             added.append(attr)
-        elif nodeB.get(attrB) is None:
+        elif attrB not in nodeB:
             attributes[attr] = {'old_value': nodeA[attrA]}
             deleted.append(attr)
         elif nodeA[attrA] == nodeB[attrB]:
@@ -150,12 +150,12 @@ def diff_attributes(nodeA, nodeB,
         attrA = mapA.get(attr, attr)
         attrB = mapB.get(attr, attr)
 
-        if nodeA.get(attrA) is None and nodeB.get(attrB) is None:
+        if attrA not in nodeA and attrB not in nodeB:
             continue
-        elif nodeA.get(attrA) is None:
+        elif attrA not in nodeA:
             attributes[attr] = {'value': nodeB[attrB]}
             added.append(attr)
-        elif nodeB.get(attrB) is None:
+        elif attrB not in nodeB:
             attributes[attr] = {'old_value': nodeA[attrA]}
             deleted.append(attr)
         else:
@@ -426,18 +426,28 @@ def diff_children(parent_idA, childrenA, parent_idB, childrenB,
 def detect_moves(nodes_deleted, nodes_added):
     """
     Look for nodes with the same `content_id` that appear in both lists, and
-    interpret those nodes as having moved.
-    Returns `nodes_moved` (list).
+    interpret those nodes as having moved. Returns `nodes_moved` (list).
     """
-    # flatten lists (in case added nodes have children)
     #
+    nodes_moved = []
     return []
 
 
-# PHASE 3
+# PHASE 3: simplify to avoid moves counting as add/delete
 ################################################################################
 
+def simplify_diff(raw_diff):
+    """
+    """
+    simplified_diff = {}
 
-# PHASE 4
+
+
+# PHASE 4: restructure for displaying diffs in tree form
 ################################################################################
+
+def restructure_diff(simplified_diff):
+    """
+    """
+    restructured_diff = {}
 
