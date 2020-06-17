@@ -18,7 +18,7 @@ def test_diff_subtree_noop(sample_tree):
     assert len(sample_tree['children']) == 3
     unchanged_tree = copy.deepcopy(sample_tree)
 
-    diff = diff_subtree(None, sample_tree, None, unchanged_tree)
+    diff = diff_subtree(None, sample_tree, None, unchanged_tree, root=True)
 
     diff_keys = ['nodes_deleted', 'nodes_added', 'nodes_modified']
     for diff_key in diff_keys:
@@ -38,7 +38,7 @@ def test_diff_subtree_removal(sample_tree, sample_tree_with_removals):
     assert len(sample_tree['children']) == 3
     assert len(sample_tree_with_removals['children']) == 2
 
-    diff = diff_subtree(None, sample_tree, None, sample_tree_with_removals)
+    diff = diff_subtree(None, sample_tree, None, sample_tree_with_removals, root=True)
     # pprint.pprint(diff, width=120)
 
     nodes_deleted = diff['nodes_deleted']
@@ -74,7 +74,7 @@ def test_diff_subtree_added(sample_tree, sample_tree_added):
     assert len(sample_tree['children']) == 3
     assert len(sample_tree_added['children']) == 5
 
-    diff = diff_subtree(None, sample_tree, None, sample_tree_added)
+    diff = diff_subtree(None, sample_tree, None, sample_tree_added, root=True)
     # print('\n')
     # pprint.pprint(diff, width=120)
 

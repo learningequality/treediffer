@@ -18,7 +18,7 @@ def treediff(treeA, treeB, preset=None, format="simplified",
 
     # 1. compute the tree diff
     # special handling of tree root nodes??? (might not have the same IDs)
-    raw_diff = diff_subtree(None, treeA, None, treeB,
+    raw_diff = diff_subtree(None, treeA, None, treeB, root=True,
                             attrs=attrs, exclude_attrs=exclude_attrs,
                             mapA=mapA, mapB=mapB,
                             assessment_items_key=assessment_items_key,
@@ -42,7 +42,7 @@ def treediff(treeA, treeB, preset=None, format="simplified",
 # PHASE 1
 ################################################################################
 
-def diff_subtree(parent_idA, nodeA, parent_idB, nodeB,
+def diff_subtree(parent_idA, nodeA, parent_idB, nodeB, root=False,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
     assessment_items_key='assessment_items', setlike_attrs=['tags']):
     """
@@ -50,17 +50,21 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB,
     corresponding `nodeB` in the new tree. This is the main workhorse call and
     includes diff of attributes, and recusive diff of node's children.
     """
-    # Get nodeA info
-    node_id_keyA = mapA.get('node_id', 'node_id')
-    node_idA = nodeA[node_id_keyA]
-
-    # Get nodeB info
-    node_id_keyB = mapB.get('node_id', 'node_id')
-    content_id_keyB = mapB.get('content_id', 'content_id')
-    node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
+    if root:
+        # special handling for root node of the tree
+        node_idA = nodeA['id']  # TODO: make customizable via map (in case different in Studio/Kolibri trees)
+        node_idB, content_idB = nodeB['id'], nodeB['source_id']
+    else:
+        # Get nodeA info
+        node_id_keyA = mapA.get('node_id', 'node_id')
+        node_idA = nodeA[node_id_keyA]
+        # Get nodeB info
+        node_id_keyB = mapB.get('node_id', 'node_id')
+        content_id_keyB = mapB.get('content_id', 'content_id')
+        node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
 
     nodes_modified = []
-    attrs_diff = diff_attributes(nodeA, nodeB,
+    attrs_diff = diff_attributes(nodeA, nodeB, root=root,
                                  attrs=attrs, exclude_attrs=exclude_attrs,
                                  mapA=mapA, mapB=mapB,
                                  assessment_items_key=assessment_items_key,
@@ -94,7 +98,7 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB,
 
 
 
-def diff_attributes(nodeA, nodeB,
+def diff_attributes(nodeA, nodeB, root=False,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
     assessment_items_key='assessment_items', setlike_attrs=['tags']):
     """
@@ -110,7 +114,7 @@ def diff_attributes(nodeA, nodeB,
         attrs.update( set(mapA.keys()).union(set(mapA.keys())) )
         #
         mapA_vals = set(mapA.values())
-        mapB_vals = set(mapB.values())        
+        mapB_vals = set(mapB.values())
         for keyA in nodeA.keys():
             if keyA not in mapA_vals:
                 attrs.add(keyA)

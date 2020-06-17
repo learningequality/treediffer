@@ -365,7 +365,7 @@ def get_topic_with_children(prefix, children):
 def sample_tree(sample_children):
     """
     - T1 (three nodes template)
-    - T2:
+    - T2
       - T21 (three nodes template)
       - T22 (three nodes template)
       - T23 (three nodes template)
@@ -375,8 +375,7 @@ def sample_tree(sample_children):
     """
     tree = {
         "title": "Sample tree",
-        "node_id": "0000000", # TODO: ass special code for handling root ids == channel id
-        "content_id": "c0000000", # TODO: ass special code for handling root ids == channel id
+        "id": "0000000",
         "source_id": "sample-tree",
         "description": "A simple tree we can modify for all kinds of tests",
         "language": "en",
@@ -432,4 +431,4 @@ def sample_ricecooker_tree():
     with open('tests/fixtures/ricecooker/small_channel_tree.json') as jsonf:
         tree = json.load(jsonf)
     return tree
-    
+
