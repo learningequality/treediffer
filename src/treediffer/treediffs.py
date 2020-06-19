@@ -506,49 +506,63 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
     """
     node_id_keyA = mapA.get('node_id', 'node_id')
     node_id_keyB = mapB.get('node_id', 'node_id')
+
+    def restrucute_list(difflist, parent_id_key="parent_id", diff_node_id_key="node_id",
+                        tree=None, by="node_id"):
+        """
+        Restucture list of diff nodes `difflist` by identifing complere subtrees
+        of changes. The logic used is to loop over all diff nodes in `difflist`,
+        get all their descendants the tree `tree` and do the restructuing if all
+        the descendants are also in `difflist`.
+        Returns a list of individual nodes and restrucured node subtrees.
+        """
+        # 1. store for the restructured nodes:
+        nodes_by_id = dict((node[diff_node_id_key], node) for node in difflist)
+        # 2. a shallow copy of 1. to use as pointers to all nodes for lookups
+        pointers_to_nodes = nodes_by_id.copy()
+        all_node_ids = set(nodes_by_id.keys())
+        #
+        node_ids_restructured = set()
+        for diff_node_id in all_node_ids:
+            if diff_node_id in node_ids_restructured:
+                continue  # skip nodes thave have already been restrucutred
+            assert diff_node_id in nodes_by_id, 'must be still in list'
+            #
+            # now let's lookup node_id in the tree and get its descendants
+            tree_node = treefindby(treeB, diff_node_id, by=by)
+            descendants = get_descendants(tree_node, include_self=False)
+            descendants_node_ids = set(dnode[by] for dnode in descendants)
+            if descendants_node_ids and descendants_node_ids.issubset(all_node_ids):
+                # complete subtree rooted at tree_node is added so let's restrucutre
+                for dtree_node in descendants:
+                    dnode_id = dtree_node[by]
+                    if dnode_id in nodes_by_id:
+                        # this descendant hasn't been restructured yet, do it!
+                        ddiff_node = nodes_by_id.pop(dnode_id)
+                        parent_id = ddiff_node[parent_id_key]
+                        parent_diff_node = pointers_to_nodes[parent_id]
+                        if 'children' in parent_diff_node:
+                            parent_diff_node['children'].append(ddiff_node)
+                        else:
+                            parent_diff_node['children'] = [ddiff_node]
+                        node_ids_restructured.add(dnode_id)
+                    else:
+                        print('INFO node', dnode_id, 'has already been restructured')
+            else:
+                pass  # no restructuring: leave diff_node in nodes_by_id for now
+        return list(nodes_by_id.values())
     
     nodes_added = simplified_diff['nodes_added']
-    # 1. store for the restructured nodes:
-    new_added_by_node_id = dict((node['node_id'], node) for node in nodes_added)
-    # 2. a shallow copy of 1. in order to have pointers to all nodes for lookups
-    pointers_to_nodes_added = new_added_by_node_id.copy()
-    added_node_ids = set(new_added_by_node_id.keys())
-
-    node_ids_restructured = set()
-    for node_id in added_node_ids:
-        if node_id in node_ids_restructured:
-            continue  # skip nodes thave have already been restrucutred
-        assert node_id in new_added_by_node_id, 'must be in the remaining nodes'
-        # 
-        # now let's lookup node_id in the tree and get its descendants
-        tree_node = treefindby(treeB, node_id, by="node_id")
-        descendants = get_descendants(tree_node, include_self=False)
-        descendants_node_ids = set(dnode['node_id'] for dnode in descendants)
-        if descendants_node_ids and descendants_node_ids.issubset(added_node_ids):
-            # complete subtree rooted at tree_node is added so let's restrucutre
-            for dtree_node in descendants:
-                dnode_id = dtree_node[node_id_keyA]
-                if dnode_id in new_added_by_node_id:
-                    # this descendant hasn't been restructured yet, let's do it!
-                    ddiff_node = new_added_by_node_id.pop(dnode_id)
-                    parent_id = ddiff_node['parent_id']
-                    parent_diff_node = pointers_to_nodes_added[parent_id]
-                    if 'children' in parent_diff_node:
-                        parent_diff_node['children'].append(ddiff_node)
-                    else:
-                        parent_diff_node['children'] = [ddiff_node]
-                    node_ids_restructured.add(dnode_id)
-                else:
-                    print('INFO node', dnode_id, 'has already been restructured')
-        else:
-            pass  # no restructure: leave node in new_added_by_node_id for now
-
+    new_nodes_added = restrucute_list(nodes_added,
+        parent_id_key="parent_id", diff_node_id_key="node_id",
+        tree=treeB, by=node_id_keyB)
 
     restructured_diff = {
         'nodes_deleted': simplified_diff['nodes_deleted'],
-        'nodes_added': list(new_added_by_node_id.values()),
+        'nodes_added': new_nodes_added,
         'nodes_moved': simplified_diff['nodes_moved'],
         'nodes_modified': simplified_diff['nodes_modified'],
     }
     return restructured_diff
+
 
