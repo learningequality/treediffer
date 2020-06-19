@@ -69,7 +69,6 @@ def sample_tree_added(sample_tree, sample_children):
     ])
     return modified_tree
 
-
 def test_diff_subtree_added(sample_tree, sample_tree_added):
     assert len(sample_tree['children']) == 3
     assert len(sample_tree_added['children']) == 5

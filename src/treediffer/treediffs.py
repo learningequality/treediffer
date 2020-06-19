@@ -1,7 +1,7 @@
 import pprint
 import copy
 
-from .diffutils import contains, findby, flatten_subtree
+from .diffutils import contains, findby, flatten_subtree, treefindby, get_descendants
 
 # EXTERNAL API
 ################################################################################
@@ -24,18 +24,22 @@ def treediff(treeA, treeB, preset=None, format="simplified",
                             assessment_items_key=assessment_items_key,
                             setlike_attrs=setlike_attrs)
 
+
     # 2. detect node moves
     nodes_moved = detect_moves(raw_diff['nodes_deleted'], raw_diff['nodes_added'])
     raw_diff['nodes_moved'] = nodes_moved
-
     if format == "raw":
         return raw_diff
 
-    # # 3. simplify (remove nodes moved from nodes added/deleted lists)
-    # simplified_diff = simplify_diff(raw_diff)
-    # 
-    # # 4. restructure (un-flatten)
-    # simplified_diff = restructure_diff(simplified_diff)
+    # 3. simplify (remove nodes moved from nodes added/deleted lists)
+    simplified_diff = simplify_diff(raw_diff)
+    if format == "simplified":
+        return simplified_diff
+
+    # 4. restructure (un-flatten)
+    restructured_diff = restructure_diff(simplified_diff, treeA, treeB, mapA=mapA, mapB=mapB)
+    if format == "restructured":
+        return restructured_diff
 
 
 
@@ -432,26 +436,119 @@ def detect_moves(nodes_deleted, nodes_added):
     Look for nodes with the same `content_id` that appear in both lists, and
     interpret those nodes as having moved. Returns `nodes_moved` (list).
     """
-    #
+    nodes_deleted_old_node_id = {}
+    for node in nodes_deleted:
+        nodes_deleted_old_node_id[node['old_node_id']] = node
+
+    nodes_added_by_new_node_id = {}
+    for node in nodes_added:
+        nodes_added_by_new_node_id[node['node_id']] = node
+
+    nodes_moved_by_new_node_id = {}
+    for old_node_id, nd in nodes_deleted_old_node_id.items():
+        for new_node_id, na in nodes_added_by_new_node_id.items():
+            if nd['content_id'] == na['content_id']:
+                if new_node_id not in nodes_moved_by_new_node_id.keys():
+                    nm = copy.deepcopy(na)
+                    nm['old_node_id'] = old_node_id
+                    nm['old_parent_id'] = nd['old_parent_id']
+                    nm['old_sort_order'] = nd['old_parent_id']
+                    nodes_moved_by_new_node_id[new_node_id] = nm
+                else:
+                    print('A node move with content_id=' + nd['content_id'] + ' already exists.')
+
     nodes_moved = []
-    return []
+    for nm in nodes_moved_by_new_node_id.values():
+        if nm['old_parent_id'] == nm['parent_id'] and nm['old_node_id'] == nm['node_id']:
+            nm['sort_order_only_move'] = True
+        else:
+            nm['sort_order_only_move'] = False
+        nodes_moved.append(nm)
+
+    return nodes_moved
 
 
-# PHASE 3: simplify to avoid moves counting as add/delete
+# PHASE 3: simplify to avoid nodes moved showing up in added and deleted
 ################################################################################
 
 def simplify_diff(raw_diff):
     """
+    For presentation purposes, nodes that were recognized as "moved" don't need
+    to show up in the `nodes_deleted` and `nodes_added` lists.
     """
-    simplified_diff = {}
+    nodes_moved = raw_diff['nodes_moved']
+    old_node_ids_moved = set(nm['old_node_id'] for nm in nodes_moved)
+    new_node_ids_moved = set(nm['node_id'] for nm in nodes_moved)
+
+    nodes_deleted = raw_diff['nodes_deleted']
+    new_nodes_deleted = [nd for nd in nodes_deleted if nd['old_node_id'] not in old_node_ids_moved]
+
+    nodes_added = raw_diff['nodes_added']
+    new_nodes_added = [na for na in nodes_added if na['node_id'] not in new_node_ids_moved]
+
+    simplified_diff = {
+        'nodes_deleted': new_nodes_deleted,
+        'nodes_added': new_nodes_added,
+        'nodes_moved': nodes_moved,
+        'nodes_modified': raw_diff['nodes_modified'],
+    }
+    return simplified_diff
 
 
 
 # PHASE 4: restructure for displaying diffs in tree form
 ################################################################################
 
-def restructure_diff(simplified_diff):
+def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
     """
+    Go thorugh flatlists of nodes deleted, added, and moved and organize them
+    into subtrees to make get a more compact representation for display purposes.
     """
-    restructured_diff = {}
+    node_id_keyA = mapA.get('node_id', 'node_id')
+    node_id_keyB = mapB.get('node_id', 'node_id')
+    
+    nodes_added = simplified_diff['nodes_added']
+    # 1. store for the restructured nodes:
+    new_added_by_node_id = dict((node['node_id'], node) for node in nodes_added)
+    # 2. a shallow copy of 1. in order to have pointers to all nodes for lookups
+    pointers_to_nodes_added = new_added_by_node_id.copy()
+    added_node_ids = set(new_added_by_node_id.keys())
+
+    node_ids_restructured = set()
+    for node_id in added_node_ids:
+        if node_id in node_ids_restructured:
+            continue  # skip nodes thave have already been restrucutred
+        assert node_id in new_added_by_node_id, 'must be in the remaining nodes'
+        # 
+        # now let's lookup node_id in the tree and get its descendants
+        tree_node = treefindby(treeB, node_id, by="node_id")
+        descendants = get_descendants(tree_node, include_self=False)
+        descendants_node_ids = set(dnode['node_id'] for dnode in descendants)
+        if descendants_node_ids and descendants_node_ids.issubset(added_node_ids):
+            # complete subtree rooted at tree_node is added so let's restrucutre
+            for dtree_node in descendants:
+                dnode_id = dtree_node[node_id_keyA]
+                if dnode_id in new_added_by_node_id:
+                    # this descendant hasn't been restructured yet, let's do it!
+                    ddiff_node = new_added_by_node_id.pop(dnode_id)
+                    parent_id = ddiff_node['parent_id']
+                    parent_diff_node = pointers_to_nodes_added[parent_id]
+                    if 'children' in parent_diff_node:
+                        parent_diff_node['children'].append(ddiff_node)
+                    else:
+                        parent_diff_node['children'] = [ddiff_node]
+                    node_ids_restructured.add(dnode_id)
+                else:
+                    print('INFO node', dnode_id, 'has already been restructured')
+        else:
+            pass  # no restructure: leave node in new_added_by_node_id for now
+
+
+    restructured_diff = {
+        'nodes_deleted': simplified_diff['nodes_deleted'],
+        'nodes_added': list(new_added_by_node_id.values()),
+        'nodes_moved': simplified_diff['nodes_moved'],
+        'nodes_modified': simplified_diff['nodes_modified'],
+    }
+    return restructured_diff
 

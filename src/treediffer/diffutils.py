@@ -1,4 +1,5 @@
-
+import copy
+import pprint
 
 # LIST/SET UTILS
 ################################################################################
@@ -63,18 +64,51 @@ def contains(container, item, by="node_id"):
 # TREE UTILS
 ################################################################################
 
-def subtreefindallby(subtree, value, by="node_id"):
+def treefindby(subtree, value, by="node_id"):
     """
-    Returns list of nodes in `subtree` that have attribute `by` equal to `value`.
+    Returns node in `subtree` that has attribute `by` equal to `value`.
+    """
+    results = treefindallby(subtree, value, by=by)
+    if len(results) == 1:
+        return results[0]
+    elif len(results) > 1:
+        print("WARNING: multiple results found matching " + by + "=" + value)
+        return results[0]
+    else:
+        print("WARNING: no results found matching " + by + "=" + value)
+        return None
+
+
+def treefindallby(subtree, value, by="node_id"):
+    """
+    Returns all node in `subtree` that have attribute `by` equal to `value`.
     """
     results = []
-    if subtree[by] == value:
+    if by in subtree and subtree[by] == value:
         results.append(subtree)
     if 'children' in subtree:
         for child in subtree['children']:
-            child_restuls = subtreefindallby(child, value, by)
-            results.extend(child_restuls)
+            child_results = treefindallby(child, value, by=by)
+            results.extend(child_results)
     return results
+
+
+def get_descendants(node, include_self=True):
+    """
+    Return a flat list including `node` and all its descendants. Nodes returned
+    are modified to remove the tree structure between them (set `children=[]`).
+    """
+    results = []
+    if include_self:
+        node_copy = copy.deepcopy(node)
+        node_copy['children'] = []
+        results.append(node_copy)
+    if 'children' in node:
+        for child in node['children']:
+            child_results = get_descendants(child, include_self=True)
+            results.extend(child_results)
+    return results
+
 
 
 # FLATTENING
@@ -85,6 +119,7 @@ def flatten_subtree(parent_id, sort_order, subtree, kind, map={}):
     Recusively flatten the `subtree` of nodes and return the info a a flat list.
     The diff format depends on what `kind` of diff it is: `added` or `deleted`.
     """
+    subtree =  copy.deepcopy(subtree)  # to avoid modifying original tree
     flatlist = []
     node_id_key = map.get('node_id', 'node_id')
     content_id_key = map.get('content_id', 'content_id')
@@ -121,7 +156,7 @@ def flatten_subtree(parent_id, sort_order, subtree, kind, map={}):
     else:
         raise ValueError('Unexpected flatlist kind ' + str(kind) + ' found.')
 
-    # ... then add your children.
+    # ... then add your children
     for i, child in enumerate(children):
         sort_order = child.get(sort_order_key, None)
         if sort_order is None:
