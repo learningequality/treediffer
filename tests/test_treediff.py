@@ -223,7 +223,22 @@ def test_treediff_with_moves_and_reorder_simplified(sample_tree, sample_tree_wit
     assert len(simplified_diff['nodes_deleted']) == 0
 
     nodes_moved = simplified_diff['nodes_moved']
-    assert len(nodes_moved) == 10
+    assert len(nodes_moved) == 5
+
+
+def test_treediff_with_moves_restructured(sample_tree, sample_tree_with_moves_and_reorder):
+    assert len(sample_tree['children']) == 3
+    assert len(sample_tree_with_moves_and_reorder['children']) == 3
+
+    restructured_diff = treediff(sample_tree, sample_tree_with_moves_and_reorder, format="restructured")
+    # pprint.pprint(restructured_diff)
+
+    assert len(restructured_diff['nodes_added']) == 0
+    assert len(restructured_diff['nodes_modified']) == 0
+    assert len(restructured_diff['nodes_deleted']) == 0
+
+    nodes_moved = restructured_diff['nodes_moved']
+    assert len(nodes_moved) == 2
 
 
 

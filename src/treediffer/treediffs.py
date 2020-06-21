@@ -12,7 +12,7 @@ logger.setLevel(logging.DEBUG)
 # EXTERNAL API
 ################################################################################
 
-def treediff(treeA, treeB, preset=None, format="simplified",
+def treediff(treeA, treeB, preset=None, format="simplified", sort_order_changes=False,
              attrs=None, exclude_attrs=[], mapA={}, mapB={},
              assessment_items_key='assessment_items', setlike_attrs=['tags']):
     """
@@ -34,16 +34,34 @@ def treediff(treeA, treeB, preset=None, format="simplified",
     # 2. detect node moves
     nodes_moved = detect_moves(raw_diff['nodes_deleted'], raw_diff['nodes_added'])
     raw_diff['nodes_moved'] = nodes_moved
-    if format == "raw":
+
+    if format == "raw" and sort_order_changes:
+        # keep sort_order changes and count them as moves
+        return raw_diff
+    elif format == "raw" and not sort_order_changes:
+        # filter out nodes for which only sort_order has changed (local moves)
+        new_nodes_moved = [nm for nm in nodes_moved if not nm['sort_order_change']]
+        raw_diff['nodes_moved'] = new_nodes_moved
         return raw_diff
 
     # 3. simplify (remove nodes moved from nodes added/deleted lists)
     simplified_diff = simplify_diff(raw_diff)
-    if format == "simplified":
+    if format == "simplified" and sort_order_changes:
+        return simplified_diff
+    elif format == "simplified" and not sort_order_changes:
+        # filter out nodes for which only sort_order has changed (local moves)
+        nodes_moved = simplified_diff['nodes_moved']
+        new_nodes_moved = [nm for nm in nodes_moved if not nm['sort_order_change']]
+        simplified_diff['nodes_moved'] = new_nodes_moved
         return simplified_diff
 
     # 4. restructure (un-flatten)
     restructured_diff = restructure_diff(simplified_diff, treeA, treeB, mapA=mapA, mapB=mapB)
+    if not sort_order_changes:
+        # filter out nodes for which only sort_order has changed (local moves)
+        nodes_moved = restructured_diff['nodes_moved']
+        new_nodes_moved = [nm for nm in nodes_moved if not nm['sort_order_change']]
+        restructured_diff['nodes_moved'] = new_nodes_moved
     if format == "restructured":
         return restructured_diff
 
@@ -524,9 +542,9 @@ def detect_moves(nodes_deleted, nodes_added):
     nodes_moved = []
     for nm in nodes_moved_by_new_node_id.values():
         if nm['old_parent_id'] == nm['parent_id'] and nm['old_node_id'] == nm['node_id']:
-            nm['sort_order_only_move'] = True
+            nm['sort_order_change'] = True
         else:
-            nm['sort_order_only_move'] = False
+            nm['sort_order_change'] = False
         nodes_moved.append(nm)
 
     return nodes_moved
@@ -578,7 +596,7 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
         of changes. The logic used is to loop over all diff nodes in `difflist`,
         get all their descendants the tree `tree` and do the restructuing if all
         the descendants are also in `difflist`.
-        Returns a list of individual nodes and restrucured node subtrees.
+        Returns a list of individual nodes and restructured node subtrees.
         """
         # 1. store for the restructured nodes:
         nodes_by_id = dict((node[diff_node_id_key], node) for node in difflist)
