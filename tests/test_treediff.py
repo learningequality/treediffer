@@ -36,7 +36,7 @@ def test_treediff_noop_simplified(sample_tree):
         assert simplified_diff[diff_key] == []
 
 
-# ADDED
+# ADDED AFTER RESTRUCTURING
 ################################################################################
 
 from test_diff_subtree import sample_tree_added
@@ -65,7 +65,7 @@ def test_difftree_added_restructured(sample_tree, sample_tree_added):
     assert len(nodes_added[1]['children']) == 3
 
 
-# DELETED
+# DELETED AFTER RESTRUCTURING
 ################################################################################
 
 from test_diff_subtree import sample_tree_with_removals
@@ -94,7 +94,26 @@ def test_difftree_removal_restructured(sample_tree, sample_tree_with_removals):
     assert len(diff_node['children']) == 1  # T31
     assert len(diff_node['children'][0]['children']) == 1  # T311
     assert len(diff_node['children'][0]['children'][0]['children']) == 3
-    
+
+
+# ADD AND RM AFTER RESTRUCTURING
+################################################################################
+
+from test_diff_subtree import sample_tree_add_and_rm
+
+def test_difftree_add_and_rm_restructured(sample_tree, sample_tree_add_and_rm):
+    assert len(sample_tree['children']) == 3
+    assert len(sample_tree_add_and_rm['children']) == 3
+
+    diff = treediff(sample_tree, sample_tree_add_and_rm, format="restructured")
+    # pprint.pprint(diff, width=120)
+
+    nodes_added = diff['nodes_added']
+    assert len(nodes_added) == 9
+    assert len(diff['nodes_modified']) == 0
+     
+    nodes_deleted = diff['nodes_deleted']
+    assert len(nodes_deleted) == 3
 
 
 

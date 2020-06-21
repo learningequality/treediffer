@@ -1,7 +1,12 @@
-import pprint
 import copy
+import logging
+import pprint
 
 from .diffutils import contains, findby, treefindby, get_descendants
+
+
+logger = logging.getLogger('treediffs')
+logger.setLevel(logging.DEBUG)
 
 
 # EXTERNAL API
@@ -140,7 +145,7 @@ def diff_attributes(nodeA, nodeB, root=False,
         attrB = mapB.get(attr, attr)
 
         if attrA not in nodeA and attrB not in nodeB:
-            print("WARNING requested diff for attr " + attr + " that don't exist")
+            logger.warning("requested diff for missing attr " + attr)
             continue
         elif attrA not in nodeA:
             attributes[attr] = {'value': nodeB[attrB]}
@@ -514,7 +519,7 @@ def detect_moves(nodes_deleted, nodes_added):
                     nm['old_sort_order'] = nd['old_sort_order']
                     nodes_moved_by_new_node_id[new_node_id] = nm
                 else:
-                    print('A node move with content_id=' + nd['content_id'] + ' already exists.')
+                    logger.info('A node move with content_id=' + nd['content_id'] + ' already exists.')
 
     nodes_moved = []
     for nm in nodes_moved_by_new_node_id.values():
@@ -590,9 +595,9 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
             # now let's lookup node_id in the tree and get its descendants
             tree_node = treefindby(tree, diff_node_id, by=by)
             descendants = get_descendants(tree_node, include_self=False)
-            descendants_node_ids = set(dnode[by] for dnode in descendants)
-            if descendants_node_ids and descendants_node_ids.issubset(all_node_ids):
-                # complete subtree rooted at tree_node is added so let's restrucutre
+            descendants_ids = set(dnode[by] for dnode in descendants)
+            if descendants_ids and descendants_ids.issubset(all_node_ids):
+                # full subtree rooted at tree_node in list, so let's restrucutre
                 for dtree_node in descendants:
                     dnode_id = dtree_node[by]
                     if dnode_id in nodes_by_id:
@@ -606,7 +611,7 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
                             parent_diff_node['children'] = [ddiff_node]
                         node_ids_restructured.add(dnode_id)
                     else:
-                        print('INFO node', dnode_id, 'has already been restructured')
+                        logger.debug('node ' + dnode_id + ' has already been restructured')
             else:
                 pass  # no restructuring: leave diff_node in nodes_by_id for now
         return list(nodes_by_id.values())
@@ -621,12 +626,16 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
         parent_id_key="parent_id", diff_node_id_key="node_id",
         tree=treeB, by=node_id_keyB)
 
+    nodes_moved = simplified_diff['nodes_moved']
+    new_nodes_moved = restrucute_list(nodes_moved,
+        parent_id_key="parent_id", diff_node_id_key="node_id",
+        tree=treeB, by=node_id_keyB)
+
     restructured_diff = {
         'nodes_deleted': new_nodes_deleted,
         'nodes_added': new_nodes_added,
-        'nodes_moved': simplified_diff['nodes_moved'],
+        'nodes_moved': new_nodes_moved,
         'nodes_modified': simplified_diff['nodes_modified'],
     }
     return restructured_diff
-
 

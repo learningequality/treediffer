@@ -82,3 +82,83 @@ def test_diff_subtree_removal(sample_tree, sample_tree_with_removals):
     nodes_deleted = diff['nodes_deleted']
     assert len(nodes_deleted) == 6
 
+
+# ADD AND RM
+################################################################################
+
+@pytest.fixture
+def sample_tree_add_and_rm(sample_tree, sample_children):
+    modified_tree = copy.deepcopy(sample_tree)
+    sample_children_copy = copy.deepcopy(sample_children)
+    t1 = modified_tree['children'][0]
+    t1['children'] = [
+        t1['children'][0],
+        {
+            "node_id": "nid4",
+            "content_id": "cid4",
+            "title": "Newly added node",
+            "description": "The descr. of the newly added node.",
+        },
+        t1['children'][2],
+        {
+            "node_id": "nid5",
+            "content_id": "cid5",
+            "title": "Newly added node",
+            "description": "The descr. of the newly added node.",
+        },
+        {
+            "node_id": "nid6",
+            "content_id": "cid6",
+            "title": "Newly added node",
+            "description": "The descr. of the newly added node.",
+        },
+    ]
+    t2 = modified_tree['children'][1]
+    t4 = get_topic_with_children('T4', sample_children_copy)
+    t5 = get_topic_with_children('T5', sample_children_copy)
+    t6 = get_topic_with_children('T6', sample_children_copy)
+    t2['children'] = [
+        t2['children'][0],
+        t4,
+        t2['children'][2],
+        t5,
+        t6,
+    ]
+    t311 = modified_tree['children'][2]['children'][0]['children'][0]
+    t311['children'] = [
+        t311['children'][0],
+        {
+            "node_id": "nid3114",
+            "content_id": "cid3114",
+            "title": "Newly added node in T311",
+            "description": "The descr. of the newly added node.",
+        },
+        t311['children'][2],
+        {
+            "node_id": "nid3115",
+            "content_id": "cid3115",
+            "title": "Newly added node in T311",
+            "description": "The descr. of the newly added node.",
+        },
+        {
+            "node_id": "nid3116",
+            "content_id": "cid3116",
+            "title": "Newly added node in T311",
+            "description": "The descr. of the newly added node.",
+        },
+    ]
+    return modified_tree
+
+def test_diff_subtree_add_and_rm(sample_tree, sample_tree_add_and_rm):
+    assert len(sample_tree['children']) == 3
+    assert len(sample_tree_add_and_rm['children']) == 3
+
+    diff = diff_subtree(None, sample_tree, None, sample_tree_add_and_rm, root=True)
+    # pprint.pprint(diff, width=120)
+
+    nodes_added = diff['nodes_added']
+    assert len(nodes_added) == 18
+    assert len(diff['nodes_modified']) == 0
+     
+    nodes_deleted = diff['nodes_deleted']
+    assert len(nodes_deleted) == 6
