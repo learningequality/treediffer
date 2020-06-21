@@ -1,5 +1,6 @@
 import copy
 import pprint
+import pytest
 
 # SUT
 from treediffer.treediffs import treediff
@@ -114,6 +115,115 @@ def test_difftree_add_and_rm_restructured(sample_tree, sample_tree_add_and_rm):
      
     nodes_deleted = diff['nodes_deleted']
     assert len(nodes_deleted) == 3
+
+
+# MOVES
+################################################################################
+
+@pytest.fixture
+def sample_tree_with_moves(sample_tree):
+    assert len(sample_tree['children']) == 3
+    modified_tree = copy.deepcopy(sample_tree)
+    t1 = modified_tree['children'][0]
+    t2 = modified_tree['children'][1]
+    t3 = modified_tree['children'][2]
+
+    # move T1_nid3 to be child of Topic 3
+    n3 = t1['children'][2]
+    assert n3['node_id'] == "T1_nid3"
+    t1['children'] =  [t1['children'][0], t1['children'][1]]
+    # n2['sort_order'] = t3['children'][-1]['sort_order'] + 1
+    n3['node_id'] += '__new'
+    t3['children'].append(n3)
+
+    # move Subtopic 23 to be child of Topic 31
+    t23 = t2['children'][2]
+    t23['node_id'] += '__new'
+    t2['children'] =  [t2['children'][0], t2['children'][1]]
+    t31 = t3['children'][0]
+    # t22['sort_order'] = t31['children'][-1]['sort_order'] + 1
+    t31['children'].append(t23)
+
+    return modified_tree
+
+
+def test_treediff_with_moves_simplified(sample_tree, sample_tree_with_moves):
+    assert len(sample_tree['children']) == 3
+    assert len(sample_tree_with_moves['children']) == 3
+
+    simplified_diff = treediff(sample_tree, sample_tree_with_moves, format="simplified")
+    # pprint.pprint(simplified_diff)
+
+    assert len(simplified_diff['nodes_added']) == 0
+    assert len(simplified_diff['nodes_modified']) == 0
+    assert len(simplified_diff['nodes_deleted']) == 0
+
+    nodes_moved = simplified_diff['nodes_moved']
+    assert len(nodes_moved) == 5
+
+
+def test_treediff_with_moves_restructured(sample_tree, sample_tree_with_moves):
+    assert len(sample_tree['children']) == 3
+    assert len(sample_tree_with_moves['children']) == 3
+
+    restructured_diff = treediff(sample_tree, sample_tree_with_moves, format="restructured")
+    # pprint.pprint(restructured_diff)
+
+    assert len(restructured_diff['nodes_added']) == 0
+    assert len(restructured_diff['nodes_modified']) == 0
+    assert len(restructured_diff['nodes_deleted']) == 0
+
+    nodes_moved = restructured_diff['nodes_moved']
+    assert len(nodes_moved) == 2
+
+
+
+# MOVES INVOLVING REOERDERING
+################################################################################
+
+@pytest.fixture
+def sample_tree_with_moves_and_reorder(sample_tree):
+    """
+    Same as sample_tree_with_moves but moves that also cause sort_order changes.
+    """
+    assert len(sample_tree['children']) == 3
+    modified_tree = copy.deepcopy(sample_tree)
+    t1 = modified_tree['children'][0]
+    t2 = modified_tree['children'][1]
+    t3 = modified_tree['children'][2]
+
+    # move T1_nid2 to be child of Topic 3
+    n2 = t1['children'][1]
+    assert n2['node_id'] == "T1_nid2"
+    t1['children'] =  [t1['children'][0], t1['children'][2]]
+    # n2['sort_order'] = t3['children'][-1]['sort_order'] + 1
+    n2['node_id'] += '__new'
+    t3['children'].append(n2)
+
+    # move Subtopic 22 to be child of Topic 31
+    t22 = t2['children'][1]
+    t22['node_id'] += '__new'
+    t2['children'] =  [t2['children'][0], t2['children'][2]]
+    t31 = t3['children'][0]
+    # t22['sort_order'] = t31['children'][-1]['sort_order'] + 1
+    t31['children'].append(t22)
+
+    return modified_tree
+
+
+def test_treediff_with_moves_and_reorder_simplified(sample_tree, sample_tree_with_moves_and_reorder):
+    assert len(sample_tree['children']) == 3
+    assert len(sample_tree_with_moves_and_reorder['children']) == 3
+
+    simplified_diff = treediff(sample_tree, sample_tree_with_moves_and_reorder, format="simplified")
+    # pprint.pprint(simplified_diff)
+
+    assert len(simplified_diff['nodes_added']) == 0
+    assert len(simplified_diff['nodes_modified']) == 0
+    assert len(simplified_diff['nodes_deleted']) == 0
+
+    nodes_moved = simplified_diff['nodes_moved']
+    assert len(nodes_moved) == 10
 
 
 
