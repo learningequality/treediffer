@@ -1,7 +1,8 @@
 import pprint
 import copy
 
-from .diffutils import contains, findby, flatten_subtree, treefindby, get_descendants
+from .diffutils import contains, findby, treefindby, get_descendants
+
 
 # EXTERNAL API
 ################################################################################
@@ -43,7 +44,7 @@ def treediff(treeA, treeB, preset=None, format="simplified",
 
 
 
-# PHASE 1
+# INTERNAL API
 ################################################################################
 
 def diff_subtree(parent_idA, nodeA, parent_idB, nodeB, root=False,
@@ -101,6 +102,8 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB, root=False,
     }
 
 
+# NODE ATTRIBUTES
+################################################################################
 
 def diff_attributes(nodeA, nodeB, root=False,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
@@ -337,6 +340,62 @@ def diff_assessment_items(listA, listB, exclude_attrs=[], mapA={}, mapB={}):
 
 
 
+# TREE STUCTURE
+################################################################################
+
+def flatten_subtree(parent_id, sort_order, subtree, kind, map={}):
+    """
+    Recusively flatten the `subtree` of nodes and return the info a a flat list.
+    The diff format depends on what `kind` of diff it is: `added` or `deleted`.
+    """
+    subtree =  copy.deepcopy(subtree)  # to avoid modifying original tree
+    flatlist = []
+    node_id_key = map.get('node_id', 'node_id')
+    content_id_key = map.get('content_id', 'content_id')
+    sort_order_key = map.get('sort_order', 'sort_order')
+
+    if 'children' in subtree:
+        children = subtree.pop('children')
+    else:
+        children = []
+
+    # first add yourself...
+    if kind == "deleted":
+        node = dict(
+            old_node_id=subtree[node_id_key],
+            old_parent_id=parent_id,
+            old_sort_order=sort_order,
+            content_id=subtree[content_id_key],
+            attributes=dict(
+                (attr, {'value': val}) for attr, val in subtree.items()
+            )
+        )
+        flatlist.append(node)
+    elif kind == "added":
+        node = dict(
+            node_id=subtree[node_id_key],
+            parent_id=parent_id,
+            sort_order=sort_order,
+            content_id=subtree[content_id_key],
+            attributes=dict(
+                (attr, {'value': val}) for attr, val in subtree.items()
+            )
+        )
+        flatlist.append(node)
+    else:
+        raise ValueError('Unexpected flatlist kind ' + str(kind) + ' found.')
+
+    # ... then add your children
+    for i, child in enumerate(children):
+        sort_order = child.get(sort_order_key, None)
+        if sort_order is None:
+            sort_order = float(i + 1)  # 1-based indexitng
+        childflatlist = flatten_subtree(subtree[node_id_key], sort_order, child, kind=kind, map=map)
+        flatlist.extend(childflatlist)
+
+    return flatlist
+
+
 def diff_children(parent_idA, childrenA, parent_idB, childrenB,
     attrs=None, exclude_attrs=[], mapA={}, mapB={},
     assessment_items_key='assessment_items', setlike_attrs=['tags']):
@@ -452,7 +511,7 @@ def detect_moves(nodes_deleted, nodes_added):
                     nm = copy.deepcopy(na)
                     nm['old_node_id'] = old_node_id
                     nm['old_parent_id'] = nd['old_parent_id']
-                    nm['old_sort_order'] = nd['old_parent_id']
+                    nm['old_sort_order'] = nd['old_sort_order']
                     nodes_moved_by_new_node_id[new_node_id] = nm
                 else:
                     print('A node move with content_id=' + nd['content_id'] + ' already exists.')
@@ -529,7 +588,7 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
             assert diff_node_id in nodes_by_id, 'must be still in list'
             #
             # now let's lookup node_id in the tree and get its descendants
-            tree_node = treefindby(treeB, diff_node_id, by=by)
+            tree_node = treefindby(tree, diff_node_id, by=by)
             descendants = get_descendants(tree_node, include_self=False)
             descendants_node_ids = set(dnode[by] for dnode in descendants)
             if descendants_node_ids and descendants_node_ids.issubset(all_node_ids):
@@ -551,14 +610,19 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
             else:
                 pass  # no restructuring: leave diff_node in nodes_by_id for now
         return list(nodes_by_id.values())
-    
+
+    nodes_deleted = simplified_diff['nodes_deleted']
+    new_nodes_deleted = restrucute_list(nodes_deleted,
+        parent_id_key="old_parent_id", diff_node_id_key="old_node_id",
+        tree=treeA, by=node_id_keyA)
+
     nodes_added = simplified_diff['nodes_added']
     new_nodes_added = restrucute_list(nodes_added,
         parent_id_key="parent_id", diff_node_id_key="node_id",
         tree=treeB, by=node_id_keyB)
 
     restructured_diff = {
-        'nodes_deleted': simplified_diff['nodes_deleted'],
+        'nodes_deleted': new_nodes_deleted,
         'nodes_added': new_nodes_added,
         'nodes_moved': simplified_diff['nodes_moved'],
         'nodes_modified': simplified_diff['nodes_modified'],

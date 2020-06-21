@@ -5,7 +5,6 @@ import pprint
 from treediffer.treediffs import treediff
 
 
-from test_diff_subtree import sample_tree_added
 
 
 DEBUG_MODE = True
@@ -37,25 +36,18 @@ def test_treediff_noop_simplified(sample_tree):
         assert simplified_diff[diff_key] == []
 
 
-def test_difftree_added_simplified(sample_tree, sample_tree_added):
+# ADDED
+################################################################################
+
+from test_diff_subtree import sample_tree_added
+
+
+def test_difftree_added_raw(sample_tree, sample_tree_added):
     pass  # see test_diff_subtree.test_diff_subtree_added
 
 
 def test_difftree_added_simplified(sample_tree, sample_tree_added):
-    assert len(sample_tree['children']) == 3
-    assert len(sample_tree_added['children']) == 5
-
-    simplified_diff = treediff(sample_tree, sample_tree_added, format="simplified")
-    # print('\n')
-    # pprint.pprint(simplified_diff, width=120)
-
-    assert len(simplified_diff['nodes_deleted']) == 0
-    assert len(simplified_diff['nodes_modified']) == 0
-    assert len(simplified_diff['nodes_moved']) == 0
-
-    nodes_added = simplified_diff['nodes_added']
-    assert len(nodes_added) == 5
-
+    pass # see test_diff_subtree.test_diff_subtree_added
 
 def test_difftree_added_restructured(sample_tree, sample_tree_added):
     assert len(sample_tree['children']) == 3
@@ -63,16 +55,46 @@ def test_difftree_added_restructured(sample_tree, sample_tree_added):
     assert len(sample_tree_added['children'][4]['children']) == 3
 
     restructured_diff = treediff(sample_tree, sample_tree_added, format="restructured")
-    # print('\n')
-    # pprint.pprint(restructured_diff, width=120)
-    
+
     assert len(restructured_diff['nodes_deleted']) == 0
     assert len(restructured_diff['nodes_modified']) == 0
     assert len(restructured_diff['nodes_moved']) == 0
 
     nodes_added = restructured_diff['nodes_added']
     assert len(nodes_added) == 2
+    assert len(nodes_added[1]['children']) == 3
 
+
+# DELETED
+################################################################################
+
+from test_diff_subtree import sample_tree_with_removals
+
+def test_difftree_removal_raw(sample_tree, sample_tree_with_removals):
+    pass  # see test_diff_subtree.test_diff_subtree_removal
+
+
+def test_difftree_removal_simplified(sample_tree, sample_tree_with_removals):
+    pass  # see test_diff_subtree.test_diff_subtree_removal
+
+
+def test_difftree_removal_restructured(sample_tree, sample_tree_with_removals):
+    assert len(sample_tree['children']) == 3
+    assert len(sample_tree_with_removals['children']) == 2
+
+    simplified_diff = treediff(sample_tree, sample_tree_with_removals, format="restructured")
+
+    assert len(simplified_diff['nodes_added']) == 0
+    assert len(simplified_diff['nodes_modified']) == 0
+    assert len(simplified_diff['nodes_moved']) == 0
+
+    nodes_deleted = simplified_diff['nodes_deleted']
+    assert len(nodes_deleted) == 1          # T3
+    diff_node = nodes_deleted[0]
+    assert len(diff_node['children']) == 1  # T31
+    assert len(diff_node['children'][0]['children']) == 1  # T311
+    assert len(diff_node['children'][0]['children'][0]['children']) == 3
+    
 
 
 
