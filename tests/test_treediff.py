@@ -2,8 +2,11 @@ import copy
 import pprint
 import pytest
 
+from treediffer.diffutils import findby
+
 # SUT
 from treediffer.treediffs import treediff
+
 
 
 
@@ -56,6 +59,7 @@ def test_difftree_added_restructured(sample_tree, sample_tree_added):
     assert len(sample_tree_added['children'][4]['children']) == 3
 
     restructured_diff = treediff(sample_tree, sample_tree_added, format="restructured")
+    # pprint.pprint(restructured_diff)
 
     assert len(restructured_diff['nodes_deleted']) == 0
     assert len(restructured_diff['nodes_modified']) == 0
@@ -63,7 +67,10 @@ def test_difftree_added_restructured(sample_tree, sample_tree_added):
 
     nodes_added = restructured_diff['nodes_added']
     assert len(nodes_added) == 2
-    assert len(nodes_added[1]['children']) == 3
+    n4 = findby(nodes_added, {"node_id":'nid4'}, by="node_id")
+    assert n4
+    t4 = findby(nodes_added, {"node_id":'T4'}, by="node_id")
+    assert len(t4['children']) == 3
 
 
 # DELETED AFTER RESTRUCTURING
@@ -90,11 +97,13 @@ def test_difftree_removal_restructured(sample_tree, sample_tree_with_removals):
     assert len(simplified_diff['nodes_moved']) == 0
 
     nodes_deleted = simplified_diff['nodes_deleted']
-    assert len(nodes_deleted) == 1          # T3
-    diff_node = nodes_deleted[0]
-    assert len(diff_node['children']) == 1  # T31
-    assert len(diff_node['children'][0]['children']) == 1  # T311
-    assert len(diff_node['children'][0]['children'][0]['children']) == 3
+    assert len(nodes_deleted) == 1  # T3 subtree
+    t3 = findby(nodes_deleted, {"old_node_id":'T3'}, by="old_node_id")
+    assert len(t3['children']) == 1
+    t31 = findby(t3['children'], {"old_node_id":'T31'}, by="old_node_id")
+    assert len(t31['children']) == 1
+    t311 = findby(t31['children'], {"old_node_id":'T311'}, by="old_node_id")
+    assert len(t311['children']) == 3
 
 
 # ADD AND RM AFTER RESTRUCTURING
@@ -109,12 +118,15 @@ def test_difftree_add_and_rm_restructured(sample_tree, sample_tree_add_and_rm):
     diff = treediff(sample_tree, sample_tree_add_and_rm, format="restructured")
     # pprint.pprint(diff, width=120)
 
-    nodes_added = diff['nodes_added']
-    assert len(nodes_added) == 9
-    assert len(diff['nodes_modified']) == 0
-     
     nodes_deleted = diff['nodes_deleted']
     assert len(nodes_deleted) == 3
+
+    nodes_added = diff['nodes_added']
+    assert len(nodes_added) == 9
+
+    assert len(diff['nodes_moved']) == 0
+    assert len(diff['nodes_modified']) == 0
+
 
 
 # MOVES
