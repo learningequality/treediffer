@@ -1,3 +1,9 @@
+
+
+# Fixtures and trees used for stres-testing treediffer code
+tests/fixtures/large
+
+
 *.py[cod]
 __pycache__
 

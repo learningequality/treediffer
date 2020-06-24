@@ -1,6 +1,12 @@
+# DIFF PRESETS
+################################################################################
+
+diff_presets = {}   # preset -> kwargs to pass to difftree function
 
 
-# RICECOOKER TREES
+
+
+# RICECOOKER INTERNAL TREES
 ################################################################################
 
 assessment_items_key = 'questions'
@@ -12,14 +18,17 @@ ricecooker_map = {
 }
 
 
-# RICECOOKER->STUDIO TREES
+# RICECOOKER->STUDIO TREE (wire format)
 ################################################################################
 
+ricecooker_studio_map = {}
 
-assessment_items_key = 'questions'
+diff_presets['ricecooker'] = dict(
+    assessment_items_key='questions',
+    mapA=ricecooker_studio_map.copy(),
+    mapB=ricecooker_studio_map.copy(),
+)
 
-ricecooker_studio_map = {
-}
 
 
 # STUDIO TREES
@@ -38,20 +47,26 @@ STUDIO_ASSESSMENT_ITEM_ATTRIBUES = [
 
 STUDIO_FILE_ATTRIBUES = ["checksum", "preset_id", "language_id", "source_url", "file_format_id"]
 
+# TODO diff_presets['studio']
+
 
 
 # KOLIBRI TREES
 ################################################################################
 
-assessment_items_key = None
-
-setlike_attrs = [
-    "tags",
-    "assessmentmetadata",  # assessment items are actually list-like, but handle as a set for simplicity
-]
-
 kolibri_map = {
+    "node_id": "id",
     "license_id": "license_name",
     "copyright_holder": "license_owner",
 }
+
+diff_presets['kolibri'] = dict(
+    assessment_items_key=None,
+    setlike_attrs=[
+        "tags",
+        "assessment_item_ids",  # assessment items are actually list-like, but handle as a set for simplicity
+    ],
+    mapA=kolibri_map.copy(),
+    mapB=kolibri_map.copy(),
+)
 

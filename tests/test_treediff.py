@@ -266,3 +266,42 @@ def test_treediff_ricecooker_noop(sample_ricecooker_tree):
     diff_keys = ['nodes_deleted', 'nodes_added', 'nodes_modified', 'nodes_moved']
     for diff_key in diff_keys:
         assert raw_diff[diff_key] == []
+
+
+
+# DIFF KOLIBRI TREES
+################################################################################
+
+@pytest.mark.skip('Used only for local load testing (largest tree we have)')
+def test_treediff_large_kolibri_tree_noop(large_kolibri_tree):
+
+    # import tracemalloc
+    # tracemalloc.start()
+
+    # assert len(large_kolibri_tree['children']) == 22
+    unchanged_tree = copy.deepcopy(large_kolibri_tree)
+
+    raw_diff = treediff(large_kolibri_tree, unchanged_tree, preset="kolibri", format="raw")
+
+    # current, peak = tracemalloc.get_traced_memory()
+    # print("::::MEM:::: Current memory usage is {}MB; Peak was {}MB".format(current/10**6, peak/10**6))
+    # tracemalloc.stop()
+
+    diff_keys = ['nodes_deleted', 'nodes_added', 'nodes_modified', 'nodes_moved']
+    for diff_key in diff_keys:
+        assert raw_diff[diff_key] == []
+
+@pytest.mark.skip('Used only for local load testing (largest tree we have)')
+def test_treediff_large_kolibri_tree_modify(large_kolibri_tree):
+    modified_tree = copy.deepcopy(large_kolibri_tree)
+    modified_tree['children'][3]['children'][1]['title'] = 'Modified title'
+
+    raw_diff = treediff(large_kolibri_tree, modified_tree, preset="kolibri", format="raw")
+
+    diff_keys = ['nodes_deleted', 'nodes_added', 'nodes_moved']
+    for diff_key in diff_keys:
+        assert raw_diff[diff_key] == []
+
+    nodes_modified = raw_diff['nodes_modified']
+    assert(len(nodes_modified)) == 1
+

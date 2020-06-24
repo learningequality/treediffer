@@ -3,7 +3,7 @@ import logging
 import pprint
 
 from .diffutils import contains, findby, treefindby, get_descendants
-
+from .presets import diff_presets
 
 logger = logging.getLogger('treediffs')
 logger.setLevel(logging.DEBUG)
@@ -20,7 +20,16 @@ def treediff(treeA, treeB, preset=None, format="simplified", sort_order_changes=
     """
     # 0. load diff preset
     if preset is not None:
-        pass
+        if preset in diff_presets:
+            kwargs = diff_presets[preset]
+            attrs = kwargs['attrs'] if 'attrs' in kwargs else attrs
+            exclude_attrs = kwargs['exclude_attrs'] if 'exclude_attrs' in kwargs else exclude_attrs
+            mapA = kwargs['mapA'] if 'mapA' in kwargs else mapA
+            mapB = kwargs['mapB'] if 'mapB' in kwargs else mapB
+            assessment_items_key = kwargs['assessment_items_key'] if 'assessment_items_key' in kwargs else assessment_items_key
+            setlike_attrs = kwargs['setlike_attrs'] if 'setlike_attrs' in kwargs else setlike_attrs
+
+            # print(preset, format, sort_order_changes, attrs, exclude_attrs, mapA, mapB, assessment_items_key, setlike_attrs)
 
     # 1. compute the tree diff
     # special handling of tree root nodes??? (might not have the same IDs)
@@ -80,8 +89,10 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB, root=False,
     """
     if root:
         # special handling for root node of the tree
-        node_idA = nodeA['id']  # TODO: make customizable via map (in case different in Studio/Kolibri trees)
-        node_idB, content_idB = nodeB['id'], nodeB['source_id']
+        # TODO: make customizable via map (in case different in Studio/Kolibri trees)
+        node_idA = nodeA['id']
+        node_idB, content_idB = nodeB['id'], nodeB['source_id']  # ricecooker
+        # node_idB, content_idB = nodeB['id'], nodeB['content_id']  # kolibri
     else:
         # Get nodeA info
         node_id_keyA = mapA.get('node_id', 'node_id')

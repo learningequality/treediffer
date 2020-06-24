@@ -426,9 +426,27 @@ def sample_tree(sample_children):
     return tree
 
 
+# RICECOOKER TREES
+################################################################################
+
 @pytest.fixture
 def sample_ricecooker_tree():
     with open('tests/fixtures/ricecooker/small_channel_tree.json') as jsonf:
         tree = json.load(jsonf)
     return tree
 
+
+
+# KOLIBRI TREES
+################################################################################
+
+@pytest.fixture
+def large_kolibri_tree():
+    filename = 'tests/fixtures/large/1ceff53605e55bef987d88e0908658c5.json'
+    if not os.path.exists(filename):
+        print("Need to obtain the 1ceff53605e55bef987d88e0908658c5.json fixtures"
+              " which are not included in repo due to the 260M file size")
+        sys.exit(1)
+    with open(filename) as jsonf:
+        tree = json.load(jsonf)
+    return tree
