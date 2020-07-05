@@ -6,6 +6,7 @@ import pytest
 from treediffer.treediffs import diff_subtree
 
 
+from treediffer.diffutils import print_diff
 from conftest import get_topic_with_children
 
 DEBUG_MODE = True
@@ -75,6 +76,7 @@ def test_diff_subtree_removal(sample_tree, sample_tree_with_removals):
 
     diff = diff_subtree(None, sample_tree, None, sample_tree_with_removals, root=True)
     # pprint.pprint(diff, width=120)
+    # print_diff(diff)
 
     assert len(diff['nodes_added']) == 0
     assert len(diff['nodes_modified']) == 0
@@ -96,20 +98,20 @@ def sample_tree_add_and_rm(sample_tree, sample_children):
         {
             "node_id": "nid4",
             "content_id": "cid4",
-            "title": "Newly added node",
+            "title": "First newly added node",
             "description": "The descr. of the newly added node.",
         },
         t1['children'][2],
         {
             "node_id": "nid5",
             "content_id": "cid5",
-            "title": "Newly added node",
+            "title": "Second newly added node",
             "description": "The descr. of the newly added node.",
         },
         {
             "node_id": "nid6",
             "content_id": "cid6",
-            "title": "Newly added node",
+            "title": "Third newly added node",
             "description": "The descr. of the newly added node.",
         },
     ]
@@ -130,20 +132,20 @@ def sample_tree_add_and_rm(sample_tree, sample_children):
         {
             "node_id": "nid3114",
             "content_id": "cid3114",
-            "title": "Newly added node in T311",
+            "title": "First added node in T311",
             "description": "The descr. of the newly added node.",
         },
         t311['children'][2],
         {
             "node_id": "nid3115",
             "content_id": "cid3115",
-            "title": "Newly added node in T311",
+            "title": "Second added node in T311",
             "description": "The descr. of the newly added node.",
         },
         {
             "node_id": "nid3116",
             "content_id": "cid3116",
-            "title": "Newly added node in T311",
+            "title": "Third added node in T311",
             "description": "The descr. of the newly added node.",
         },
     ]
@@ -155,6 +157,7 @@ def test_diff_subtree_add_and_rm(sample_tree, sample_tree_add_and_rm):
 
     diff = diff_subtree(None, sample_tree, None, sample_tree_add_and_rm, root=True)
     # pprint.pprint(diff, width=120)
+    # print_diff(diff)
 
     nodes_added = diff['nodes_added']
     assert len(nodes_added) == 18

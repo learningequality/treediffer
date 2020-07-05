@@ -2,7 +2,7 @@ import copy
 import pprint
 import pytest
 
-from treediffer.diffutils import findby
+from treediffer.diffutils import findby, print_diff
 
 # SUT
 from treediffer.treediffs import treediff
@@ -115,17 +115,18 @@ def test_difftree_add_and_rm_restructured(sample_tree, sample_tree_add_and_rm):
     assert len(sample_tree['children']) == 3
     assert len(sample_tree_add_and_rm['children']) == 3
 
-    diff = treediff(sample_tree, sample_tree_add_and_rm, format="restructured")
+    restructured_diff = treediff(sample_tree, sample_tree_add_and_rm, format="restructured")
     # pprint.pprint(diff, width=120)
+    # print_diff(restructured_diff)
 
-    nodes_deleted = diff['nodes_deleted']
+    nodes_deleted = restructured_diff['nodes_deleted']
     assert len(nodes_deleted) == 3
 
-    nodes_added = diff['nodes_added']
+    nodes_added = restructured_diff['nodes_added']
     assert len(nodes_added) == 9
 
-    assert len(diff['nodes_moved']) == 0
-    assert len(diff['nodes_modified']) == 0
+    assert len(restructured_diff['nodes_moved']) == 0
+    assert len(restructured_diff['nodes_modified']) == 0
 
 
 
@@ -165,6 +166,7 @@ def test_treediff_with_moves_simplified(sample_tree, sample_tree_with_moves):
 
     simplified_diff = treediff(sample_tree, sample_tree_with_moves, format="simplified")
     # pprint.pprint(simplified_diff)
+    # print_diff(simplified_diff)
 
     assert len(simplified_diff['nodes_added']) == 0
     assert len(simplified_diff['nodes_modified']) == 0
@@ -180,6 +182,7 @@ def test_treediff_with_moves_restructured(sample_tree, sample_tree_with_moves):
 
     restructured_diff = treediff(sample_tree, sample_tree_with_moves, format="restructured")
     # pprint.pprint(restructured_diff)
+    # print_diff(restructured_diff)
 
     assert len(restructured_diff['nodes_added']) == 0
     assert len(restructured_diff['nodes_modified']) == 0
@@ -229,6 +232,7 @@ def test_treediff_with_moves_and_reorder_simplified(sample_tree, sample_tree_wit
 
     simplified_diff = treediff(sample_tree, sample_tree_with_moves_and_reorder, format="simplified")
     # pprint.pprint(simplified_diff)
+    # print_diff(simplified_diff)
 
     assert len(simplified_diff['nodes_added']) == 0
     assert len(simplified_diff['nodes_modified']) == 0
@@ -238,7 +242,7 @@ def test_treediff_with_moves_and_reorder_simplified(sample_tree, sample_tree_wit
     assert len(nodes_moved) == 5
 
 
-def test_treediff_with_moves_restructured(sample_tree, sample_tree_with_moves_and_reorder):
+def test_treediff_with_moves_and_reorder_restructured(sample_tree, sample_tree_with_moves_and_reorder):
     assert len(sample_tree['children']) == 3
     assert len(sample_tree_with_moves_and_reorder['children']) == 3
 

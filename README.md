@@ -43,4 +43,6 @@ https://treediffer.readthedocs.io/
 TODOs
 -----
  -[ ] Finish basic functionality
+ -[ ] Add kitchen sink test for combined deleted, added, moved, and modified
+
  
