@@ -5,9 +5,6 @@ graft tests
 
 include .coveragerc
 
-include AUTHORS.rst
-include CHANGELOG.rst
-include CONTRIBUTING.rst
 include LICENSE
 include README.md
 

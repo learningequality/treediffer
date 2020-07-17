@@ -76,6 +76,8 @@ of four separate additions).
 
 
 
+
+
 ## Internal API (Low Level)
 
 The functions the `treediff` module are named `diff_` and accept the following
@@ -101,6 +103,44 @@ LL = dict(
 Note: in general users should not need to set the low level API params and can
 instead rely on one of the presets, which will set the appropriate keyword args,
 e.g. using `preset="studio"` is equivalent to call with `**studio_preset_kwargs`.
+
+
+### Attribute maps
+
+The arguments `mapA` and `mapB` are used to make the same diff logic work for
+trees that have different attributes names. The internal diff logic always works
+will look for the following standard attributes (derived from Studio data model):
+
+ - Nodes:
+   - `node_id`: an unique identifier that represents the node's position within the tree
+   - `parent_id`: the node ID of the parent node
+   - `content_id`: a persistent identifier for the content of the node (allows us to detect moves)
+   - `sort_order`: position within parent
+ - Assessment items:
+   - `assessment_id`: like content_id for assessment items (allows us to detect moves)
+   - `order`: sort order of the question within the exercise
+
+Example attribute map used to map the "standard attributes" to the attributes
+used by ricecooker JSON trees:
+
+```python
+ricecooker_map = {
+    # channel attrs
+    "root.node_id": "id",             # a.k.a. channel_id
+    "root.content_id": "source_id",   # unique identifier within source_domain
+    #
+    # node attrs
+    "license_name": "license.license_id",
+    "license_description": "license.description",
+    "copyright_holder": "license.copyright_holder",
+    "role_visibility": "role",
+}
+```
+Note the special `root.*` attributes which are used when processing the root node.
+Note also the values in the `ricecooker_map` use `.`-accessor patterns, which
+tell to look use the value of the nested dict object.
+
+
 
 
 ### List of functions that use the low level API

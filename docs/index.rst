@@ -8,8 +8,7 @@ Contents
    use_cases
    specs
    design
-   tree_diffs
-   hellodoctest
+   diff_formats
 
 
 

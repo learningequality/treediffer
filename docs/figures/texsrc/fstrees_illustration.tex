@@ -1,0 +1,124 @@
+% Author: François Févotte
+% via https://tex.stackexchange.com/a/424061
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{fontawesome}
+\usepackage{capt-of}
+
+\begin{document}
+
+\newcommand{\FTdir}{}
+\def\FTdir(#1,#2,#3){%
+  \FTfile(#1,{{\color{black!40!white}\faFolderOpen}\hspace{0.2em}#3})
+  (tmp.west)++(0.8em,-0.4em)node(#2){}
+  (tmp.west)++(1.5em,0)
+  ++(0,-1.3em) 
+}
+
+\newcommand{\FTfile}{}
+\def\FTfile(#1,#2){%
+  node(tmp){}
+  (#1|-tmp)++(0.6em,0)
+  node(tmp)[anchor=west,black]{\tt #2}
+  (#1)|-(tmp.west)
+  ++(0,-1.2em) 
+}
+
+\newcommand{\FTroot}{}
+\def\FTroot{tmp.west}
+
+\begin{tikzpicture}%
+  \draw[color=black!60!white]
+  \FTdir(\FTroot,root,/){       % root: parent = \FTroot
+    \FTdir(root,etc,etc){       % normal dir: (parentID, currentID, label)
+      \FTfile(etc,passwd)       % file:       (parentID, label)
+      \FTdir(etc,init,init.d){
+        \FTfile(init,cron)
+      }
+      \FTdir(etc,apt,apt){
+        \FTfile(apt,sources.list)
+        \FTfile(apt,preferences)
+      }
+    }
+
+    ++(0,-0.5em)                % additional space if neded
+
+    \FTdir(root,usr,usr) {
+      \FTdir(usr,bin,bin){
+        \FTfile(bin,gcc)
+        \FTfile(bin,g++)
+      }
+      \FTdir(usr,share,share){
+        \FTdir(share,doc,doc){
+          \FTdir(doc,gcc,gcc){
+            \FTfile(gcc,...)
+          }
+          \FTdir(doc,gcc,gcc-7){
+            \FTfile(gcc,...)
+          }
+        }
+      }
+      \FTfile(usr,...)}
+
+    ++(0,-0.5em)
+
+    \FTdir(root,home,home){
+      \FTdir(home,user,user)
+    }
+  };
+  \end{tikzpicture}
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+\qquad %
+\begin{tikzpicture}%
+  \draw[color=black!60!white]
+  \FTdir(\FTroot,root,/){       % root: parent = \FTroot
+    \FTdir(root,etc,etc){       % normal dir: (parentID, currentID, label)
+      \FTfile(etc,passwd)       % file:       (parentID, label)
+      \FTdir(etc,init,init.d){
+        \FTfile(init,cron)
+      }
+      \FTdir(etc,apt,apt){
+        \FTfile(apt,sources.list)
+        \FTfile(apt,preferences)
+      }
+    }
+
+    ++(0,-0.5em)                % additional space if neded
+
+    \FTdir(root,usr,usr) {
+      \FTdir(usr,bin,bin){
+        \FTfile(bin,gcc)
+        \FTfile(bin,g++)
+      }
+      \FTdir(usr,share,share){
+        \FTdir(share,doc,doc){
+          \FTdir(doc,gcc,gcc){
+            \FTfile(gcc,...)
+          }
+          \FTdir(doc,gcc,gcc-7){
+            \FTfile(gcc,...)
+          }
+        }
+      }
+      \FTfile(usr,...)}
+
+    ++(0,-0.5em)
+
+    \FTdir(root,home,home){
+      \FTdir(home,user,user)
+    }
+  };
+  \end{tikzpicture}
+
+
+\end{document}
