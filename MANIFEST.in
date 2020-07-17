@@ -1,14 +1,13 @@
 graft docs
 graft src
-graft ci
-graft tests
 
-include .coveragerc
-
-include LICENSE
 include README.md
+include LICENSE
 include CHANGELOG.rst
 
-include tox.ini .travis.yml .readthedocs.yml
+recursive-exclude tests *
+recursive-exclude docs/build *
+recursive-exclude docs/figures/texsrc *
+
 
 global-exclude *.py[cod] __pycache__/* *.so *.dylib

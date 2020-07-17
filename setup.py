@@ -15,23 +15,15 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-def read(*names, **kwargs):
-    with io.open(
-        join(dirname(__file__), *names),
-        encoding=kwargs.get('encoding', 'utf8')
-    ) as fh:
-        return fh.read()
-
+readme = open('README.md').read()
 
 setup(
     name='treediffer',
     version='0.0.1',
     license='MIT',
     description='A library of utility functions for coputing diffs between tree-like data structures.',
-    long_description='%s\n%s' % (
-        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.md')),
-        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
-    ),
+    long_description=readme,
+    long_description_content_type='text/markdown',
     author='Ivan Savov',
     author_email='ivan@learningequality.org',
     url='https://github.com/learningequality/treediffer',
@@ -66,7 +58,8 @@ setup(
     },
     keywords=[
         "tree",
-        "diff", "differences",
+        "diff",
+        "differences",
         "content",
     ],
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',

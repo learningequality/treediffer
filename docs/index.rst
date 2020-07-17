@@ -10,6 +10,3 @@ Contents
    design
    diff_formats
 
-
-
-
