@@ -375,8 +375,8 @@ def sample_tree(sample_children):
     """
     tree = {
         "title": "Sample tree",
-        "id": "0000000",
-        "source_id": "sample-tree",
+        "node_id": "0000000",
+        "content_id": "c0000000",
         "description": "A simple tree we can modify for all kinds of tests",
         "language": "en",
         "children": []

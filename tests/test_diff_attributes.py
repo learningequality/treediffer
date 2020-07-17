@@ -1,4 +1,5 @@
 import copy
+import json
 import pprint
 
 # SUT
@@ -239,3 +240,4 @@ def test_assessment_items_with_file_modifications(sample_node_with_assessment_it
     assert len(ais_diff['moved']) == 0
 
 
+    

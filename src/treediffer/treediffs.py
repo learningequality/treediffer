@@ -89,25 +89,25 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB, root=False,
     """
     if root:
         # special handling for root node of the tree
-        # TODO: make customizable via map (in case different in Studio/Kolibri trees)
-        node_idA = nodeA['id']
-        node_idB, content_idB = nodeB['id'], nodeB['source_id']  # ricecooker
-        # node_idB, content_idB = nodeB['id'], nodeB['content_id']  # kolibri
+        node_id_keyA = mapA.get('root.node_id', 'node_id')   # a.k.a. channel_id
+        node_id_keyB = mapB.get('root.node_id', 'node_id')   # a.k.a. channel_id
+        content_id_keyB = mapB.get('root.content_id', 'content_id')
     else:
-        # Get nodeA info
+        # regular nodes
         node_id_keyA = mapA.get('node_id', 'node_id')
-        node_idA = nodeA[node_id_keyA]
-        # Get nodeB info
         node_id_keyB = mapB.get('node_id', 'node_id')
         content_id_keyB = mapB.get('content_id', 'content_id')
-        node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
 
-    nodes_modified = []
+    # Get IDs for nodeA and nodeB
+    node_idA = nodeA[node_id_keyA]
+    node_idB, content_idB = nodeB[node_id_keyB], nodeB[content_id_keyB]
+
     attrs_diff = diff_attributes(nodeA, nodeB, root=root,
                                  attrs=attrs, exclude_attrs=exclude_attrs,
                                  mapA=mapA, mapB=mapB,
                                  assessment_items_key=assessment_items_key,
                                  setlike_attrs=setlike_attrs)
+    nodes_modified = []
     if attrs_diff['added'] or attrs_diff['deleted'] or attrs_diff['modified']:
         node = dict(
             node_id=node_idB,
@@ -152,7 +152,7 @@ def diff_attributes(nodeA, nodeB, root=False,
     if attrs is None:
         # Calculate "all attrs" based on the node attrs and the given attr-maps
         attrs = set()
-        attrs.update( set(mapA.keys()).union(set(mapA.keys())) )
+        attrs.update( set(mapA.keys()).union(set(mapB.keys())) )
         #
         mapA_vals = set(mapA.values())
         mapB_vals = set(mapB.values())
