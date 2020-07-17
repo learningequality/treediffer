@@ -1,0 +1,177 @@
+{
+    "title": "Prokaryotic and eukaryotic cells",
+    "changed": true,
+    "id": "a571e19fdcd2461cb706d74150a5a790",
+    "description": "Test your knowledge on the differences between prokaryotic and eukaryotic cells!",
+    "sort_order": 3.0,
+    "author": "",
+    "copyright_holder": "Khan Academy",
+    "license": 9,
+    "language": null,
+    "node_id": "2a4defb24e0449ec8147cf21d4b92429",
+    "license_description": "Permission granted to distribute through Kolibri for non-commercial use",
+    "assessment_items": [
+        {
+            "id": 49898928,
+            "question": "",
+            "type": "perseus_question",
+            "answers": "[]",
+            "contentnode": "a571e19fdcd2461cb706d74150a5a790",
+            "assessment_id": "65dff81d830c5f9390dd518f38456607",
+            "hints": "[]",
+            "raw_data": "{\"answerArea\": {\"tTable\": false, \"zTable\": false, \"calculator\": false, \"periodicTable\": false, \"chi2Table\": false}, \"question\": {\"content\": \"A scientist observes a new organism through a microscope. \\n\\n**Which of the following observations tells her that the organism is eukaryotic?**\\n\\n[[☃ radio 1]]\", \"widgets\": {\"radio 1\": {\"alignment\": \"default\", \"graded\": true, \"version\": {\"minor\": 0, \"major\": 1}, \"options\": {\"deselectEnabled\": false, \"randomize\": true, \"onePerLine\": true, \"multipleSelect\": false, \"displayCount\": null, \"choices\": [{\"clue\": \"Both prokaryotes and eukaryotes can be unicellular.\", \"content\": \"The organism is unicellular.\", \"correct\": false}, {\"clue\": \"Both prokaryotes and eukaryotes have ribosomes.\", \"content\": \"The organism has ribosomes.\", \"correct\": false}, {\"clue\": \"All cells have a cell membrane.\", \"content\": \"The organism has a cell membrane.\", \"isNoneOfTheAbove\": false, \"correct\": false}, {\"clue\": \"Eukaryotes have membrane-bound nuclei, while prokaryotes typically have DNA organized into circular \\\"loops\\\" that float freely in the cytoplasm.\", \"content\": \"The organism has a membrane bound nucleus.\", \"isNoneOfTheAbove\": false, \"correct\": true}], \"hasNoneOfTheAbove\": false}, \"type\": \"radio\", \"static\": false}}, \"images\": {}}, \"itemDataVersion\": {\"minor\": 1, \"major\": 0}, \"hints\": [{\"content\": \"Eukaryotes have a membrane-bound nucleus, while prokaryotes typically have DNA organized into circular \\\"loops\\\" that float freely in the cytoplasm.\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"Both prokaryotes and eukaryotes must have a membrane separating the intracellular environment from the extracellular environment.\\n\\nIn addition, both contain organelles such as ribosomes that aid in the production of proteins. While eukaryotes can be multicellular (made of more than one cell), both types of organisms **can** be unicellular.\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"The correct answer is \\n\\nThe organism has a membrane bound nucleus.\", \"replace\": false, \"widgets\": {}, \"images\": {}}]}",
+            "order": 0,
+            "source_url": "https://www.khanacademy.org/exercise/prokaryotic-and-eukaryotic-cells",
+            "randomize": false,
+            "deleted": false
+        },
+        {
+            "id": 49898927,
+            "question": "",
+            "type": "perseus_question",
+            "answers": "[]",
+            "contentnode": "a571e19fdcd2461cb706d74150a5a790",
+            "assessment_id": "fbfd8a02d67053168d4b30976f1d79a0",
+            "hints": "[]",
+            "raw_data": "{\"answerArea\": {\"tTable\": false, \"zTable\": false, \"calculator\": false, \"periodicTable\": false, \"chi2Table\": false}, \"question\": {\"content\": \"Alonte is viewing a cell under a microscope.\\n\\n**The presence of which of the following cell structures would tell him that the cell is eukaryotic?**\\n\\n[[☃ radio 2]]\", \"widgets\": {\"radio 2\": {\"alignment\": \"default\", \"graded\": true, \"version\": {\"minor\": 0, \"major\": 1}, \"options\": {\"deselectEnabled\": false, \"randomize\": true, \"onePerLine\": true, \"multipleSelect\": false, \"displayCount\": null, \"choices\": [{\"clue\": \"Both prokaryotes and eukaryotes contain cytoplasm.\", \"content\": \"Cytoplasm\", \"correct\": false}, {\"clue\": \"Although prokaryotes and eukaryotes store genetic material differently, both types of organisms contain it.\", \"content\": \"DNA\", \"correct\": false}, {\"clue\": \"Both prokaryotes and eukaryotes have ribosomes.\", \"content\": \"Ribosomes\", \"isNoneOfTheAbove\": false, \"correct\": false}, {\"clue\": \"Only eukaryotes have a membrane-bound nucleus, which directs cellular functions and stores genetic information.\", \"content\": \"Nucleus\", \"isNoneOfTheAbove\": false, \"correct\": true}], \"hasNoneOfTheAbove\": false}, \"type\": \"radio\", \"static\": false}}, \"images\": {}}, \"itemDataVersion\": {\"minor\": 1, \"major\": 0}, \"hints\": [{\"content\": \"Both prokaryotes and eukaryotes contain:\\n\\n- Cytoplasm in their internal environments\\n- Genetic information such as DNA\\n- Ribosomes that are used to create proteins\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"Only eukaryotes have a membrane-bound nucleus, which directs cellular functions and stores genetic information.\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"The correct answer is\\n\\nNucleus\", \"replace\": false, \"widgets\": {}, \"images\": {}}]}",
+            "order": 1,
+            "source_url": "https://www.khanacademy.org/exercise/prokaryotic-and-eukaryotic-cells",
+            "randomize": false,
+            "deleted": false
+        },
+        {
+            "id": 49898926,
+            "question": "",
+            "type": "perseus_question",
+            "answers": "[]",
+            "contentnode": "a571e19fdcd2461cb706d74150a5a790",
+            "assessment_id": "436c5a450e945f15867ea22247af89b0",
+            "hints": "[]",
+            "raw_data": "{\"answerArea\": {\"tTable\": false, \"zTable\": false, \"calculator\": false, \"periodicTable\": false, \"chi2Table\": false}, \"question\": {\"content\": \"Imarie uses a microscope to study different prokaryotic and eukaryotic organisms.  \\n\\n**Which of the following statements describes how the prokaryotic cells appear compared to the eukaryotic cells?**\\n\\n[[☃ radio 2]]\", \"widgets\": {\"radio 2\": {\"alignment\": \"default\", \"graded\": true, \"version\": {\"minor\": 0, \"major\": 1}, \"options\": {\"deselectEnabled\": false, \"randomize\": true, \"onePerLine\": true, \"multipleSelect\": false, \"displayCount\": null, \"choices\": [{\"clue\": \"Prokaryotic cells are much smaller than eukaryotic cells.  They are typically $0.1-5.0\\\\mu\\\\text{m}$ in diameter while eukaryotic cells range from $10-100\\\\mu\\\\text{m}.$\", \"content\": \"The prokaryotic cells are much smaller than the eukaryotic cells.\", \"correct\": true}, {\"clue\": \"Prokaryotic cells do not contain nuclei. \", \"content\": \"The prokaryotic cells have a nucleus, while the eukaryotic cells do not.\", \"correct\": false}, {\"clue\": \"Both prokaryotic and eukaryotic cells have cell membranes.\", \"content\": \"The prokaryotic cells have cell membranes, while the eukaryotic cells do not.\", \"isNoneOfTheAbove\": false, \"correct\": false}, {\"clue\": \"Both prokaryotic and eukaryotic cells have cytoplasm.\", \"content\": \"The prokaryotic cells have cytoplasm, and eukaryotic cells do not.\", \"isNoneOfTheAbove\": false, \"correct\": false}], \"hasNoneOfTheAbove\": false}, \"type\": \"radio\", \"static\": false}}, \"images\": {}}, \"itemDataVersion\": {\"minor\": 1, \"major\": 0}, \"hints\": [{\"content\": \"Both prokaryotes and eukaryotes contain:\\n\\n- Cytoplasm in their internal environments\\n- Genetic information (although only eukaryotes store this in the nucleus)\\n- A cell membrane that separates the intracellular environment from the extracellular environment\\n\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"Prokaryotic cells are much smaller than eukaryotic cells.  They are typically $0.1-5.0\\\\mu\\\\text{m}$ in diameter, while eukaryotic cells range from $10-100\\\\mu\\\\text{m}.$\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"The correct answer is\\n\\nThe prokaryotic cells are much smaller than the eukaryotic cells.\", \"replace\": false, \"widgets\": {}, \"images\": {}}]}",
+            "order": 2,
+            "source_url": "https://www.khanacademy.org/exercise/prokaryotic-and-eukaryotic-cells",
+            "randomize": false,
+            "deleted": false
+        }
+    ],
+    "slideshow_slides": [],
+    "files": [
+        {
+            "id": "ad8773bd21be47d891c1665e6cc247a3",
+            "checksum": "2e3bdf4a903ae6c4a69c60d3339feb18",
+            "display_name": "Exercise",
+            "file_size": 659518,
+            "language": null,
+            "file_on_disk": "https://storage.googleapis.com/studio-content/storage/2/e/2e3bdf4a903ae6c4a69c60d3339feb18.perseus",
+            "contentnode": "a571e19fdcd2461cb706d74150a5a790",
+            "file_format": "perseus",
+            "preset": {
+                "id": "exercise",
+                "name": "exercise",
+                "readable_name": "Exercise",
+                "multi_language": false,
+                "supplementary": false,
+                "thumbnail": false,
+                "subtitle": false,
+                "order": 1,
+                "kind": "exercise",
+                "allowed_formats": [
+                    "perseus"
+                ],
+                "associated_mimetypes": [
+                    "application/perseus+zip"
+                ],
+                "display": false
+            },
+            "original_filename": "Prokaryotic and eukaryotic cells.perseus",
+            "storage_url": "/content/storage/2/e/2e3bdf4a903ae6c4a69c60d3339feb18.perseus",
+            "mimetype": "application/perseus+zip",
+            "source_url": null
+        }
+    ],
+    "content_id": "bb0e985bc90256d393940f64cea27af7",
+    "modified": "2020-07-06T19:59:16.544769Z",
+    "kind": "exercise",
+    "parent": "336e0d460be24dd28bc14002cbfa37e0",
+    "children": [],
+    "published": true,
+    "associated_presets": [
+        {
+            "subtitle": false,
+            "kind_id": "exercise",
+            "readable_name": "Exercise Image",
+            "thumbnail": false,
+            "supplementary": true,
+            "id": "exercise_image",
+            "multi_language": false,
+            "order": 3,
+            "display": false
+        },
+        {
+            "subtitle": false,
+            "kind_id": "exercise",
+            "readable_name": "Thumbnail",
+            "thumbnail": true,
+            "supplementary": true,
+            "id": "exercise_thumbnail",
+            "multi_language": false,
+            "order": 2,
+            "display": true
+        },
+        {
+            "subtitle": false,
+            "kind_id": "exercise",
+            "readable_name": "Exercise Graphie",
+            "thumbnail": false,
+            "supplementary": true,
+            "id": "exercise_graphie",
+            "multi_language": false,
+            "order": 4,
+            "display": false
+        },
+        {
+            "subtitle": false,
+            "kind_id": "exercise",
+            "readable_name": "Exercise",
+            "thumbnail": false,
+            "supplementary": false,
+            "id": "exercise",
+            "multi_language": false,
+            "order": 1,
+            "display": false
+        }
+    ],
+    "valid": true,
+    "metadata": {
+        "max_sort_order": 3,
+        "resource_count": 3,
+        "has_changed_descendant": false,
+        "total_count": 1,
+        "resource_size": 1285049,
+        "coach_count": 0,
+        "assessment_count": 3
+    },
+    "tree_id": 1711284,
+    "tags": [],
+    "extra_fields": {
+        "randomize": true,
+        "m": 3,
+        "mastery_model": "do_all",
+        "n": 3
+    },
+    "original_channel": {
+        "thumbnail_url": "/content/storage/3/e/3e57b48e9160513b4192b0645e265a77.png",
+        "id": "1ceff53605e55bef987d88e0908658c5",
+        "name": "Khan Academy (English)"
+    },
+    "prerequisite": [],
+    "is_prerequisite_of": [],
+    "thumbnail_encoding": null,
+    "thumbnail_src": null,
+    "freeze_authoring_data": true,
+    "publishing": false,
+    "original_source_node_id": "aa33327358415382b868c295dfbf9e58",
+    "role_visibility": "learner",
+    "provider": "",
+    "aggregator": ""
+}

@@ -34,8 +34,26 @@ diff_presets['ricecooker'] = dict(
 # STUDIO TREES
 ################################################################################
 
-# TODO: check these
-# STUDIO_FILE_ATTRIBUES = ["checksum", "preset_id", "language_id", "source_url", "file_format_id"]
+studio_exclude_attrs = [
+    'id',                   # auto-generated uuid key (studio internal id)
+    'tree_id',              # main and staging trees have different `tree_id`s
+    'parent_id',            # auto-generated uuid key (studio internal id)
+    'lft',                  # MPTT annotations (no need to track)
+    'rght',                 # MPTT annotations (no need to track)
+    'thumbnail_encoding',   # data
+    'cloned_source_id'      # deprecated
+    'original_node_id',     # deprecated
+    'changed',
+    'modified',
+    #
+    # files
+    'files.id',             # auto-generated uuid key
+    'files.contentnode',    # points to studio internal id
+    #
+    # assessment_items
+    'assessment_items.id',              # auto-incdementing numeric id
+    'assessment_items.contentnode',     # points to studio internal id
+]
 
 studio_map = {
     "license_name": "license.license_name",
@@ -43,16 +61,7 @@ studio_map = {
 
 diff_presets['studio'] = dict(
     # assessment_items_key = 'assessment_items', # this is the default so no need
-    exclude_attrs=[
-        'id',                   # auto-generated uuid key (studio internal id)
-        'tree_id',              # main and staging trees have different `tree_id`s
-        'parent_id',            # auto-generated uuid key (studio internal id)
-        'lft',                  # MPTT annotations (no need to track)
-        'rght',                 # MPTT annotations (no need to track)
-        'thumbnail_encoding',   # data
-        'cloned_source_id'      # deprecated
-        'original_node_id',     # deprecated
-    ],
+    exclude_attrs=studio_exclude_attrs,
     mapA=studio_map.copy(),
     mapB=studio_map.copy(),
 )

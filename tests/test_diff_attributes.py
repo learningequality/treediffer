@@ -4,7 +4,7 @@ import pprint
 
 # SUT
 from treediffer.treediffs import diff_attributes
-
+from treediffer.presets import diff_presets
 
 
 
@@ -240,4 +240,53 @@ def test_assessment_items_with_file_modifications(sample_node_with_assessment_it
     assert len(ais_diff['moved']) == 0
 
 
-    
+
+# STUDIO API ASSESSMENT ITEMS
+################################################################################
+
+def test_studio_exercise_cloned_noop():
+    """
+    Test on some sample assessment_items obtaind from the Studio API.
+    """
+    node1 = json.load(open('tests/fixtures/studio/peseus_exercise_node_from_api__original.json'))
+    node2 = json.load(open('tests/fixtures/studio/peseus_exercise_node_from_api__cloned.json'))
+
+    exclude_attrs = diff_presets['studio']['exclude_attrs']
+    exclude_attrs += [
+        'id',
+        'node_id',      # expected to be different since different trees
+        'parent',       # should be parent_id (manually adding bcs API result)',
+    ]
+    mapA = diff_presets['studio']['mapA']
+    mapB = diff_presets['studio']['mapB']
+
+    attrs_diff = diff_attributes(node1, node2, exclude_attrs=exclude_attrs, mapA=mapA, mapB=mapB)
+    # pprint.pprint(attrs_diff, width=200)
+    assert len(attrs_diff['modified']) == 0
+
+
+def test_studio_exercise_cloned_and_modified():
+    node1 = json.load(open('tests/fixtures/studio/peseus_exercise_node_from_api__original.json'))
+    node2 = json.load(open('tests/fixtures/studio/peseus_exercise_node_from_api__cloned_and_modified.json'))
+
+    exclude_attrs = diff_presets['studio']['exclude_attrs']
+    exclude_attrs += [
+        'id',
+        'node_id',      # expected to be different since different trees
+        'parent',       # should be parent_id (manually adding bcs API result)',
+    ]
+    mapA = diff_presets['studio']['mapA']
+    mapB = diff_presets['studio']['mapB']
+
+    attrs_diff = diff_attributes(node1, node2, exclude_attrs=exclude_attrs, mapA=mapA, mapB=mapB)
+    # pprint.pprint(attrs_diff, width=200)
+    modified = attrs_diff['modified']
+    assert len(modified) == 2
+    assert 'files' in modified
+    assert 'description' in modified
+
+
+
+
+
+
