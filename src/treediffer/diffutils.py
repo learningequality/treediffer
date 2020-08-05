@@ -125,8 +125,10 @@ def get_attr_diff_str(diffkind, attribute):
     elif diffkind == 'moved':
         return colormap['moved'](attribute['value'])
     elif diffkind == 'modified':
-        return colormap['deleted'](attribute['old_value']) + '->' \
-                + colormap['added'](attribute['value'])
+        if 'old_value' in attribute and attribute['old_value'] != attribute['value']:
+            return colormap['deleted'](attribute['old_value']) + '->' + colormap['added'](attribute['value'])
+        else:
+            return attribute['value']
 
 def get_id_diff_str(diffkind, node, id_key):
     old_id_key = 'old_' + id_key
@@ -137,8 +139,10 @@ def get_id_diff_str(diffkind, node, id_key):
         if id_key in node:
             return colormap['added'](node[id_key])
     elif diffkind == 'moved':
-        return colormap['deleted'](node[old_id_key]) + '->' \
-                + colormap['added'](node[id_key])
+        if node[old_id_key] != node[id_key]:
+            return colormap['deleted'](node[old_id_key]) + '->' + colormap['added'](node[id_key])
+        else:
+            return node[id_key]
     elif diffkind == 'modified':
         return node[id_key]
 
@@ -146,6 +150,7 @@ def get_id_diff_str(diffkind, node, id_key):
 def print_diff_node(diffkind, node, indent=0, attrs=DEFAULT_ATTRS, ids=DEFAULT_IDS):
     line = colormap[diffkind]('  '*indent + '- ')
     
+    # attrs
     attr_strs = []
     for attr in attrs:
         attributes = node['attributes']
@@ -153,13 +158,31 @@ def print_diff_node(diffkind, node, indent=0, attrs=DEFAULT_ATTRS, ids=DEFAULT_I
         attr_strs.append(attr_str)
     line += ', '.join(attr_strs) + ' '
 
+    # ids
     id_strs = []
     for id in ids:
-        id_str = id + ':' + get_id_diff_str(diffkind, node, id)
+        id_str = id + ':' + str(get_id_diff_str(diffkind, node, id))
         id_strs.append(id_str)
     line += '(' + ', '.join(id_strs) + ')'
 
     print(line)
+
+    # all modified attrs
+    if diffkind == 'modified':
+        for attr, attr_vals in node['attributes'].items():
+            if attr in attrs or attr in ids:
+                pass # continue
+            elif 'old_value' in attr_vals and bool(attr_vals['old_value']) == False and bool(attr_vals['value']) == False:
+                continue
+            elif 'old_value' in attr_vals:
+                attrline = '  '*indent + '    > ' + attr + ': '
+                if len(attr_vals['old_value']) > 100 and len(attr_vals['value']) > 100:
+                    attrline += colormap['deleted'](attr_vals['old_value'][0:50] + '...')
+                    attrline += ' -> ' + colormap['added'](attr_vals['value'][0:50] + '...')
+                else:
+                    attrline += colormap['deleted'](attr_vals['old_value'])
+                    attrline += ' -> ' + colormap['added'](attr_vals['value'])
+                print(attrline)
 
     if 'children' in node:
         for child in node['children']:

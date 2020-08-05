@@ -115,6 +115,12 @@ def diff_subtree(parent_idA, nodeA, parent_idB, nodeB, root=False,
             content_id=content_idB,
             attributes=attrs_diff['attributes'],
         )
+        if attrs_diff['added']:
+            node['added'] = attrs_diff['added']
+        if attrs_diff['deleted']:
+            node['deleted'] = attrs_diff['deleted']
+        if attrs_diff['modified']:
+            node['modified'] = attrs_diff['modified']
         nodes_modified.append(node)
 
     nodes_deleted, nodes_added = [], []
