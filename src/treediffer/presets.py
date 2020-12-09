@@ -19,15 +19,19 @@ ricecooker_map = {
     "root.content_id": "source_id",   # unique identifier within source_domain
     #
     # node attrs
-    "license_name": "license.license_id",
-    "license_description": "license.description",
-    "copyright_holder": "license.copyright_holder",
-    "role_visibility": "role",
+    #
+    # PREVIOUSLY ricecooker json trees had license as a nested object, but doesn't
+    # seem to be necessay for current tree format produced by ricecooker
+    # "license_name": "license.license_id",
+    # "license_description": "license.description",
+    # "copyright_holder": "license.copyright_holder",
+    # "role_visibility": "role",
 }
 
 diff_presets['ricecooker'] = dict(
     exclude_attrs=[
         'license',              # nested dict object; used flat attrs instead
+        'root.node_id',         # not sure why this is necessary, but prevents warnings
     ],
     assessment_items_key='questions',
     mapA=ricecooker_map.copy(),

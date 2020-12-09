@@ -6,7 +6,7 @@ Install treediff lib in local env:
 
 then run 
 
-    ./ricecookerdiffpoc.py
+    ./ricecookerdifferpoc.py
 
 to generate the detailed tree diff JSON and and print the diff in terminal.
 """
@@ -56,8 +56,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     treeA, treeB = get_trees()
-    print('loaded old tree with ', len(treeA), 'topics in root')
-    print('loaded new tree with ', len(treeB), 'topics in root')
+    print('loaded old tree with ', len(treeA['children']), 'children in root')
+    print('loaded new tree with ', len(treeB['children']), 'children in root')
 
     diff = treediff(treeA, treeB, preset="ricecooker", format="restructured")
 
@@ -70,19 +70,15 @@ if __name__ == '__main__':
     nodes_moved = diff['nodes_moved']
     nodes_modified = diff['nodes_modified']
 
-    print('\n\nnodesdeleted:', len(nodes_deleted))
-    # pprint.pprint(nodes_deleted[0])
+    print('SUMMARY:')
+    print('#'*80)
+    print('nodes_added:', len(nodes_added))
+    print('nodes_deleted:', len(nodes_deleted))
+    print('nodes_moved:', len(nodes_moved))
+    print('nodes_modified:', len(nodes_modified))
 
-    print('\n\nnodes_added:', len(nodes_added))
-    # # pprint.pprint(nodes_added[0])
-
-    print('\n\nnodes_moved:', len(nodes_moved))
-    # pprint.pprint(nodes_moved[0])
-
-    print('\n\nnodes_modified:', len(nodes_modified))
-    # pprint.pprint(nodes_modified[100:120], width=200)
-
-
+    print('\nRESTRUCTUREDDIFF:')
+    print('#'*80)
     print_diff(diff,
         attrs=['title', 'kind'],
         ids=['node_id', 'parent_id']
