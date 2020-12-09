@@ -253,8 +253,7 @@ def test_studio_exercise_cloned_noop():
 
     exclude_attrs = diff_presets['studio']['exclude_attrs']
     exclude_attrs += [
-        'id',
-        'node_id',      # expected to be different since different trees
+        'root.node_id', # == channel_id == node_id of tree root node
         'parent',       # should be parent_id (manually adding bcs API result)',
     ]
     mapA = diff_presets['studio']['mapA']
