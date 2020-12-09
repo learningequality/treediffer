@@ -11,11 +11,10 @@
     "license_description": "Permission granted to distribute through Kolibri for non-commercial use",
     "assessment_items": [
         {
-            "id": 24865175,
             "question": "",
             "type": "perseus_question",
             "answers": "[]",
-            "contentnode": "91f1cc59997e435f974325b770f0dc6c",
+            "contentnode_id": "91f1cc59997e435f974325b770f0dc6c",
             "assessment_id": "436c5a450e945f15867ea22247af89b0",
             "hints": "[]",
             "raw_data": "{\"answerArea\": {\"tTable\": false, \"zTable\": false, \"calculator\": false, \"periodicTable\": false, \"chi2Table\": false}, \"question\": {\"content\": \"Imarie uses a microscope to study different prokaryotic and eukaryotic organisms.  \\n\\n**Which of the following statements describes how the prokaryotic cells appear compared to the eukaryotic cells?**\\n\\n[[☃ radio 2]]\", \"widgets\": {\"radio 2\": {\"alignment\": \"default\", \"graded\": true, \"version\": {\"minor\": 0, \"major\": 1}, \"options\": {\"deselectEnabled\": false, \"randomize\": true, \"onePerLine\": true, \"multipleSelect\": false, \"displayCount\": null, \"choices\": [{\"clue\": \"Prokaryotic cells are much smaller than eukaryotic cells.  They are typically $0.1-5.0\\\\mu\\\\text{m}$ in diameter while eukaryotic cells range from $10-100\\\\mu\\\\text{m}.$\", \"content\": \"The prokaryotic cells are much smaller than the eukaryotic cells.\", \"correct\": true}, {\"clue\": \"Prokaryotic cells do not contain nuclei. \", \"content\": \"The prokaryotic cells have a nucleus, while the eukaryotic cells do not.\", \"correct\": false}, {\"clue\": \"Both prokaryotic and eukaryotic cells have cell membranes.\", \"content\": \"The prokaryotic cells have cell membranes, while the eukaryotic cells do not.\", \"isNoneOfTheAbove\": false, \"correct\": false}, {\"clue\": \"Both prokaryotic and eukaryotic cells have cytoplasm.\", \"content\": \"The prokaryotic cells have cytoplasm, and eukaryotic cells do not.\", \"isNoneOfTheAbove\": false, \"correct\": false}], \"hasNoneOfTheAbove\": false}, \"type\": \"radio\", \"static\": false}}, \"images\": {}}, \"itemDataVersion\": {\"minor\": 1, \"major\": 0}, \"hints\": [{\"content\": \"Both prokaryotes and eukaryotes contain:\\n\\n- Cytoplasm in their internal environments\\n- Genetic information (although only eukaryotes store this in the nucleus)\\n- A cell membrane that separates the intracellular environment from the extracellular environment\\n\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"Prokaryotic cells are much smaller than eukaryotic cells.  They are typically $0.1-5.0\\\\mu\\\\text{m}$ in diameter, while eukaryotic cells range from $10-100\\\\mu\\\\text{m}.$\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"The correct answer is\\n\\nThe prokaryotic cells are much smaller than the eukaryotic cells.\", \"replace\": false, \"widgets\": {}, \"images\": {}}]}",
@@ -25,11 +24,10 @@
             "deleted": false
         },
         {
-            "id": 24865174,
             "question": "",
             "type": "perseus_question",
             "answers": "[]",
-            "contentnode": "91f1cc59997e435f974325b770f0dc6c",
+            "contentnode_id": "91f1cc59997e435f974325b770f0dc6c",
             "assessment_id": "fbfd8a02d67053168d4b30976f1d79a0",
             "hints": "[]",
             "raw_data": "{\"answerArea\": {\"tTable\": false, \"zTable\": false, \"calculator\": false, \"periodicTable\": false, \"chi2Table\": false}, \"question\": {\"content\": \"Alonte is viewing a cell under a microscope.\\n\\n**The presence of which of the following cell structures would tell him that the cell is eukaryotic?**\\n\\n[[☃ radio 2]]\", \"widgets\": {\"radio 2\": {\"alignment\": \"default\", \"graded\": true, \"version\": {\"minor\": 0, \"major\": 1}, \"options\": {\"deselectEnabled\": false, \"randomize\": true, \"onePerLine\": true, \"multipleSelect\": false, \"displayCount\": null, \"choices\": [{\"clue\": \"Both prokaryotes and eukaryotes contain cytoplasm.\", \"content\": \"Cytoplasm\", \"correct\": false}, {\"clue\": \"Although prokaryotes and eukaryotes store genetic material differently, both types of organisms contain it.\", \"content\": \"DNA\", \"correct\": false}, {\"clue\": \"Both prokaryotes and eukaryotes have ribosomes.\", \"content\": \"Ribosomes\", \"isNoneOfTheAbove\": false, \"correct\": false}, {\"clue\": \"Only eukaryotes have a membrane-bound nucleus, which directs cellular functions and stores genetic information.\", \"content\": \"Nucleus\", \"isNoneOfTheAbove\": false, \"correct\": true}], \"hasNoneOfTheAbove\": false}, \"type\": \"radio\", \"static\": false}}, \"images\": {}}, \"itemDataVersion\": {\"minor\": 1, \"major\": 0}, \"hints\": [{\"content\": \"Both prokaryotes and eukaryotes contain:\\n\\n- Cytoplasm in their internal environments\\n- Genetic information such as DNA\\n- Ribosomes that are used to create proteins\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"Only eukaryotes have a membrane-bound nucleus, which directs cellular functions and stores genetic information.\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"The correct answer is\\n\\nNucleus\", \"replace\": false, \"widgets\": {}, \"images\": {}}]}",
@@ -39,11 +37,10 @@
             "deleted": false
         },
         {
-            "id": 24865173,
             "question": "",
             "type": "perseus_question",
             "answers": "[]",
-            "contentnode": "91f1cc59997e435f974325b770f0dc6c",
+            "contentnode_id": "91f1cc59997e435f974325b770f0dc6c",
             "assessment_id": "65dff81d830c5f9390dd518f38456607",
             "hints": "[]",
             "raw_data": "{\"answerArea\": {\"tTable\": false, \"zTable\": false, \"calculator\": false, \"periodicTable\": false, \"chi2Table\": false}, \"question\": {\"content\": \"A scientist observes a new organism through a microscope. \\n\\n**Which of the following observations tells her that the organism is eukaryotic?**\\n\\n[[☃ radio 1]]\", \"widgets\": {\"radio 1\": {\"alignment\": \"default\", \"graded\": true, \"version\": {\"minor\": 0, \"major\": 1}, \"options\": {\"deselectEnabled\": false, \"randomize\": true, \"onePerLine\": true, \"multipleSelect\": false, \"displayCount\": null, \"choices\": [{\"clue\": \"Both prokaryotes and eukaryotes can be unicellular.\", \"content\": \"The organism is unicellular.\", \"correct\": false}, {\"clue\": \"Both prokaryotes and eukaryotes have ribosomes.\", \"content\": \"The organism has ribosomes.\", \"correct\": false}, {\"clue\": \"All cells have a cell membrane.\", \"content\": \"The organism has a cell membrane.\", \"isNoneOfTheAbove\": false, \"correct\": false}, {\"clue\": \"Eukaryotes have membrane-bound nuclei, while prokaryotes typically have DNA organized into circular \\\"loops\\\" that float freely in the cytoplasm.\", \"content\": \"The organism has a membrane bound nucleus.\", \"isNoneOfTheAbove\": false, \"correct\": true}], \"hasNoneOfTheAbove\": false}, \"type\": \"radio\", \"static\": false}}, \"images\": {}}, \"itemDataVersion\": {\"minor\": 1, \"major\": 0}, \"hints\": [{\"content\": \"Eukaryotes have a membrane-bound nucleus, while prokaryotes typically have DNA organized into circular \\\"loops\\\" that float freely in the cytoplasm.\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"Both prokaryotes and eukaryotes must have a membrane separating the intracellular environment from the extracellular environment.\\n\\nIn addition, both contain organelles such as ribosomes that aid in the production of proteins. While eukaryotes can be multicellular (made of more than one cell), both types of organisms **can** be unicellular.\", \"replace\": false, \"widgets\": {}, \"images\": {}}, {\"content\": \"The correct answer is \\n\\nThe organism has a membrane bound nucleus.\", \"replace\": false, \"widgets\": {}, \"images\": {}}]}",
@@ -62,7 +59,7 @@
             "file_size": 1212,
             "language": null,
             "file_on_disk": "https://storage.googleapis.com/studio-content/storage/2/e/differentmd5hashlikeSUPERdiffrnt.perseus",
-            "contentnode": "91f1cc59997e435f974325b770f0dc6c",
+            "contentnode_id": "91f1cc59997e435f974325b770f0dc6c",
             "file_format": "perseus",
             "preset": {
                 "id": "exercise",
