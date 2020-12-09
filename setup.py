@@ -19,7 +19,7 @@ readme = open('README.md').read()
 
 setup(
     name='treediffer',
-    version='0.0.2',
+    version='0.0.3',
     license='MIT',
     description='A library of utility functions for coputing diffs between tree-like data structures.',
     long_description=readme,
