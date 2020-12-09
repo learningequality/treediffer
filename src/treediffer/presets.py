@@ -52,12 +52,12 @@ studio_exclude_attrs = [
     'modified',
     #
     # files
-    'files.id',             # auto-generated uuid key
-    'files.contentnode',    # points to studio internal id
+    'files.id',                 # auto-generated uuid key (can change even file the same)
+    'files.contentnode_id',     # points to studio internal id (redundant)
     #
     # assessment_items
-    'assessment_items.id',              # auto-incdementing numeric id
-    'assessment_items.contentnode',     # points to studio internal id
+    # 'assessment_items.id',  # Studio auto-incdementing numeric id (NOT PRESENT IN CURRENT POC archive format so no need to exclude]
+    'assessment_items.contentnode_id',     # points to studio internal id (redundant)
     #
     'kind',
 ]
