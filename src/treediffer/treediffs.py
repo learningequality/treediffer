@@ -39,7 +39,6 @@ def treediff(treeA, treeB, preset=None, format="simplified", sort_order_changes=
                             assessment_items_key=assessment_items_key,
                             setlike_attrs=setlike_attrs)
 
-
     # 2. detect node moves
     nodes_moved = detect_moves(raw_diff['nodes_deleted'], raw_diff['nodes_added'])
     raw_diff['nodes_moved'] = nodes_moved
@@ -593,6 +592,7 @@ def detect_moves(nodes_deleted, nodes_added):
     return nodes_moved
 
 
+
 # PHASE 3: simplify to avoid nodes moved showing up in added and deleted
 ################################################################################
 
@@ -632,8 +632,8 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
     node_id_keyA = mapA.get('node_id', 'node_id')
     node_id_keyB = mapB.get('node_id', 'node_id')
 
-    def restrucute_list(difflist, parent_id_key="parent_id", diff_node_id_key="node_id",
-                        tree=None, by="node_id"):
+    def restructure_list(difflist, parent_id_key="parent_id", diff_node_id_key="node_id",
+                         tree=None, by="node_id"):
         """
         Restucture list of diff nodes `difflist` by identifing complere subtrees
         of changes. The logic used is to loop over all diff nodes in `difflist`,
@@ -665,11 +665,15 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
                         # this descendant hasn't been restructured yet, do it!
                         ddiff_node = nodes_by_id.pop(dnode_id)
                         parent_id = ddiff_node[parent_id_key]
-                        parent_diff_node = pointers_to_nodes[parent_id]
-                        if 'children' in parent_diff_node:
-                            parent_diff_node['children'].append(ddiff_node)
+                        parent_diff_node = pointers_to_nodes.get(parent_id)
+                        if parent_diff_node:
+                            if 'children' in parent_diff_node:
+                                parent_diff_node['children'].append(ddiff_node)
+                            else:
+                                parent_diff_node['children'] = [ddiff_node]
                         else:
-                            parent_diff_node['children'] = [ddiff_node]
+                            logger.warning('did not find parent ' + parent_id \
+                                + 'in pointers_to_nodes for node id ' + dnode_id)
                         node_ids_restructured.add(dnode_id)
                     else:
                         logger.debug('node ' + dnode_id + ' has already been restructured')
@@ -678,17 +682,17 @@ def restructure_diff(simplified_diff, treeA, treeB, mapA={}, mapB={}):
         return list(nodes_by_id.values())
 
     nodes_deleted = simplified_diff['nodes_deleted']
-    new_nodes_deleted = restrucute_list(nodes_deleted,
+    new_nodes_deleted = restructure_list(nodes_deleted,
         parent_id_key="old_parent_id", diff_node_id_key="old_node_id",
         tree=treeA, by=node_id_keyA)
 
     nodes_added = simplified_diff['nodes_added']
-    new_nodes_added = restrucute_list(nodes_added,
+    new_nodes_added = restructure_list(nodes_added,
         parent_id_key="parent_id", diff_node_id_key="node_id",
         tree=treeB, by=node_id_keyB)
 
     nodes_moved = simplified_diff['nodes_moved']
-    new_nodes_moved = restrucute_list(nodes_moved,
+    new_nodes_moved = restructure_list(nodes_moved,
         parent_id_key="parent_id", diff_node_id_key="node_id",
         tree=treeB, by=node_id_keyB)
 

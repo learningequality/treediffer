@@ -1,6 +1,8 @@
 import copy
+import functools
 import os
 import pprint
+
 
 # LIST/SET UTILS
 ################################################################################
@@ -59,6 +61,22 @@ def contains(container, item, by="node_id"):
         return True
     else:
         return False
+
+
+def rget(dict_obj, attrpath):
+    """
+    A fancy version of `get` that allows getting dot-separated nested attributes
+    like `license.license_name` for use in tree comparisons attribute mappings.
+    This code is inspired by solution in https://stackoverflow.com/a/31174427.
+    """
+    def _getnoerrors(dict_obj, attr):
+        """
+        Like regular get but will no raise if `dict_obj` is None.
+        """
+        if dict_obj is None:
+            return None
+        return dict_obj.get(attr)
+    return functools.reduce(_getnoerrors, [dict_obj] + attrpath.split('.'))
 
 
 
@@ -176,12 +194,14 @@ def print_diff_node(diffkind, node, indent=0, attrs=DEFAULT_ATTRS, ids=DEFAULT_I
                 continue
             elif 'old_value' in attr_vals:
                 attrline = '  '*indent + '    > ' + attr + ': '
-                if len(attr_vals['old_value']) > 100 and len(attr_vals['value']) > 100:
-                    attrline += colormap['deleted'](attr_vals['old_value'][0:50] + '...')
-                    attrline += ' -> ' + colormap['added'](attr_vals['value'][0:50] + '...')
+                old_val = attr_vals['old_value'] or ''
+                new_val = attr_vals['value'] or ''
+                if len(old_val) > 100 and len(new_val) > 100:
+                    attrline += colormap['deleted'](old_val[0:50] + '...')
+                    attrline += '->' + colormap['added'](new_val[0:50] + '...')
                 else:
-                    attrline += colormap['deleted'](attr_vals['old_value'])
-                    attrline += ' -> ' + colormap['added'](attr_vals['value'])
+                    attrline += colormap['deleted'](old_val)
+                    attrline += '->' + colormap['added'](new_val)
                 print(attrline)
 
     if 'children' in node:
@@ -191,12 +211,16 @@ def print_diff_node(diffkind, node, indent=0, attrs=DEFAULT_ATTRS, ids=DEFAULT_I
 
 def print_difflist(diffkind, difflist, attrs=DEFAULT_ATTRS, ids=DEFAULT_IDS):
     assert diffkind in colormap.keys(), 'unknown diffkind ' + diffkind
-    print(colormap[diffkind]("Nodes " + diffkind + ':'))
+    print('\n' + colormap[diffkind]("Nodes " + diffkind + ':'))
     for node in difflist:
         print_diff_node(diffkind, node, indent=0, attrs=attrs, ids=ids)
 
 
 def print_diff(diff, attrs=DEFAULT_ATTRS, ids=DEFAULT_IDS):
+    """
+    Print the diff to the terminal using color coding. The node attributes in
+    `attrs` will be displayed (e.g. title) as well `ids` (node_id and parent_id).
+    """
     for key, difflist in diff.items(): 
         if difflist:
             diffkind = key.replace('nodes_', '')
@@ -235,6 +259,4 @@ colormap = {
     'moved': blue,
     'modified': magenta,
 }
-
-
 
