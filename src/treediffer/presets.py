@@ -2,6 +2,11 @@
 ################################################################################
 
 diff_presets = {}   # preset -> kwargs to pass to difftree function
+# each preset contains:
+#  exclude_attrs (list): skip these attrs (do not consider in diff calculations)
+#  assessment_items_key (str): where is should I look for assessemtn items (in ricecooker->questions, in studio->assessment_items)
+#  mapA (dict): "standard keys" (part of treediffer logic)  --->  data keys (different for each type of tree)
+#  mapB (dict): similar mapping to the expected keys in treeB
 
 
 
@@ -53,10 +58,18 @@ studio_exclude_attrs = [
     # assessment_items
     'assessment_items.id',              # auto-incdementing numeric id
     'assessment_items.contentnode',     # points to studio internal id
+    #
+    'kind',
 ]
 
 studio_map = {
-    "license_name": "license.license_name",
+    # channel attrs
+    "root.node_id": "id",             # a.k.a. channel_id
+    "root.content_id": "source_id",   # unique identifier within source_domain
+    #
+    # node attrs
+    "license_name": "license_id",   # current POC studio channel serialized
+    # "license_name": "license.license_name", # assuming lincense object; better?
 }
 
 diff_presets['studio'] = dict(
